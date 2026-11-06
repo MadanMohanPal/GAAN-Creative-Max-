@@ -1,0 +1,27 @@
+# Node
+node_modules/
+.next/
+dist/
+.env
+.env.local
+npm-debug.log*
+
+# Flutter / Dart
+.dart_tool/
+.packages
+build/
+*.lock
+!pubspec.lock
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store

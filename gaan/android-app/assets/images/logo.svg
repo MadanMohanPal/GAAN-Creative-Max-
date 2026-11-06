@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 180" width="100%" height="100%">
+  <defs>
+    <linearGradient id="logoGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#C084FC" />
+      <stop offset="50%" stop-color="#8B5CF6" />
+      <stop offset="100%" stop-color="#D946EF" />
+    </linearGradient>
+
+    <radialGradient id="markGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#7C3AED" stop-opacity="0.5" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <!-- Ambient Glow Behind Logo Mark -->
+  <circle cx="90" cy="90" r="85" fill="url(#markGlow)" />
+
+  <!-- App Mark -->
+  <g transform="translate(18, 18) scale(0.28)">
+    <circle cx="256" cy="256" r="230" fill="#0A0B10" stroke="#251E3E" stroke-width="6" />
+    
+    <!-- Stylized G Glyph -->
+    <path d="M 330 160 C 290 120 220 120 175 160 C 130 205 130 285 175 330 C 220 375 295 375 336 330 C 352 312 360 290 360 264 L 256 264" 
+          fill="none" 
+          stroke="url(#logoGlow)" 
+          stroke-width="36" 
+          stroke-linecap="round" 
+          stroke-linejoin="round" />
+
+    <!-- Waveform bars -->
+    <rect x="220" y="220" width="12" height="40" rx="6" fill="url(#logoGlow)" />
+    <rect x="242" y="196" width="12" height="64" rx="6" fill="#C084FC" />
+    <rect x="264" y="210" width="12" height="50" rx="6" fill="url(#logoGlow)" />
+    <rect x="286" y="228" width="12" height="32" rx="6" fill="#A855F7" />
+  </g>
+
+  <!-- GAAN Wordmark -->
+  <text x="180" y="112" font-family="'Outfit', 'Inter', -apple-system, sans-serif" font-weight="900" font-size="76" letter-spacing="4" fill="#FFFFFF">
+    GAAN
+  </text>
+
+  <!-- Tagline / Subtitle -->
+  <text x="430" y="104" font-family="'Inter', sans-serif" font-weight="600" font-size="14" letter-spacing="3" fill="#8B5CF6">
+    MUSIC
+  </text>
+  <circle cx="414" cy="99" r="4" fill="#D946EF" />
+
+  <text x="182" y="142" font-family="'Inter', sans-serif" font-weight="500" font-size="14" letter-spacing="1.5" fill="#71717A">
+    STREAM IN TRUE AMOLED
+  </text>
+</svg>
