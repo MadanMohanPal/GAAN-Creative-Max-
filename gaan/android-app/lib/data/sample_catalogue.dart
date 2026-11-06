@@ -3,264 +3,335 @@ import '../models/song.dart';
 class SampleCatalogue {
   static const List<Genre> genres = [
     Genre(
-      id: '11111111-1111-1111-1111-111111111101',
-      name: 'Synthwave',
-      slug: 'synthwave',
-      imageUrl: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&w=600&q=80',
-      colorValue: 0xFFA855F7,
-    ),
-    Genre(
-      id: '11111111-1111-1111-1111-111111111102',
-      name: 'Lo-Fi Chill',
-      slug: 'lo-fi',
-      imageUrl: 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?auto=format&fit=crop&w=600&q=80',
-      colorValue: 0xFF8B5CF6,
-    ),
-    Genre(
-      id: '11111111-1111-1111-1111-111111111103',
-      name: 'Cyberpunk Electro',
-      slug: 'cyberpunk',
-      imageUrl: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80',
+      id: 'g-hindi',
+      name: 'Bollywood Romance',
+      slug: 'bollywood',
+      imageUrl: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=600&q=80',
       colorValue: 0xFFEC4899,
     ),
     Genre(
-      id: '11111111-1111-1111-1111-111111111104',
-      name: 'Deep Ambient',
-      slug: 'ambient',
-      imageUrl: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=600&q=80',
-      colorValue: 0xFF6366F1,
+      id: 'g-urdu',
+      name: 'Coke Studio & Sufi',
+      slug: 'urdu-sufi',
+      imageUrl: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80',
+      colorValue: 0xFF8B5CF6,
     ),
     Genre(
-      id: '11111111-1111-1111-1111-111111111105',
-      name: 'Indie Rock',
-      slug: 'indie',
-      imageUrl: 'https://images.unsplash.com/photo-1465847899084-d164df4dedc6?auto=format&fit=crop&w=600&q=80',
+      id: 'g-punjabi',
+      name: 'Punjabi Hits',
+      slug: 'punjabi',
+      imageUrl: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&w=600&q=80',
+      colorValue: 0xFFF59E0B,
+    ),
+    Genre(
+      id: 'g-bengali',
+      name: 'Bengali Melody',
+      slug: 'bengali',
+      imageUrl: 'https://images.unsplash.com/photo-1487180144351-b8472da7d491?auto=format&fit=crop&w=600&q=80',
       colorValue: 0xFF10B981,
     ),
     Genre(
-      id: '11111111-1111-1111-1111-111111111106',
-      name: 'Acoustic Serene',
-      slug: 'acoustic',
-      imageUrl: 'https://images.unsplash.com/photo-1487180144351-b8472da7d491?auto=format&fit=crop&w=600&q=80',
-      colorValue: 0xFFF59E0B,
+      id: 'g-pop',
+      name: 'Hollywood & Global Pop',
+      slug: 'english-pop',
+      imageUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80',
+      colorValue: 0xFF3B82F6,
     ),
   ];
 
   static const List<Artist> artists = [
     Artist(
-      id: '22222222-2222-2222-2222-222222222201',
-      name: 'Neon Mirage',
-      bio: 'Pioneer of analog synthesizers and dystopian retro-futuristic soundscapes.',
+      id: 'art-arijit',
+      name: 'Arijit Singh',
+      bio: 'The undisputed voice of modern Bollywood melodies and romantic anthems.',
       imageUrl: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=600&q=80',
-      headerUrl: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&w=1200&q=80',
+      headerUrl: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1200&q=80',
       verified: true,
-      monthlyListeners: 1845000,
+      monthlyListeners: 42800000,
     ),
     Artist(
-      id: '22222222-2222-2222-2222-222222222202',
-      name: 'Aura Minimal',
-      bio: 'Crafting introspective lo-fi textures and warm tape-saturated chords.',
-      imageUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80',
-      headerUrl: 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?auto=format&fit=crop&w=1200&q=80',
-      verified: true,
-      monthlyListeners: 920400,
-    ),
-    Artist(
-      id: '22222222-2222-2222-2222-222222222203',
-      name: 'Solstice Orbit',
-      bio: 'Cinematic post-rock and electronic fusion pushing harmonic resonance.',
+      id: 'art-atif',
+      name: 'Atif Aslam',
+      bio: 'Pakistani global vocal icon revered for heartfelt Sufi and romantic hits.',
       imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80',
       headerUrl: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1200&q=80',
       verified: true,
-      monthlyListeners: 1420000,
+      monthlyListeners: 26400000,
     ),
     Artist(
-      id: '22222222-2222-2222-2222-222222222204',
-      name: 'Komorebi Sound',
-      bio: 'Organic ambient arrangements blending field recordings with gentle piano.',
-      imageUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80',
-      headerUrl: 'https://images.unsplash.com/photo-1487180144351-b8472da7d491?auto=format&fit=crop&w=1200&q=80',
-      verified: false,
-      monthlyListeners: 580000,
+      id: 'art-rahat',
+      name: 'Rahat Fateh Ali Khan & Momina',
+      bio: 'Coke Studio legends bringing qawwali heritage to modern viral acoustic music.',
+      imageUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80',
+      headerUrl: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&w=1200&q=80',
+      verified: true,
+      monthlyListeners: 18900000,
+    ),
+    Artist(
+      id: 'art-diljit',
+      name: 'Diljit Dosanjh',
+      bio: 'Punjabi music powerhouse and global Coachella headliner.',
+      imageUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80',
+      headerUrl: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&w=1200&q=80',
+      verified: true,
+      monthlyListeners: 21500000,
     ),
   ];
 
   static const List<Album> albums = [
     Album(
-      id: '33333333-3333-3333-3333-333333333301',
-      title: 'Midnight Odyssey',
-      artistId: '22222222-2222-2222-2222-222222222201',
-      artistName: 'Neon Mirage',
-      coverUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80',
-      releaseDate: '2026-02-14',
+      id: 'alb-aashiqui',
+      title: 'Aashiqui 2 Soundtrack',
+      artistId: 'art-arijit',
+      artistName: 'Arijit Singh',
+      coverUrl: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=600&q=80',
+      releaseDate: '2013-04-08',
+      type: 'album',
+      totalTracks: 4,
+    ),
+    Album(
+      id: 'alb-cokestudio',
+      title: 'Coke Studio Season 9 Specials',
+      artistId: 'art-rahat',
+      artistName: 'Rahat Fateh Ali Khan & Momina',
+      coverUrl: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80',
+      releaseDate: '2016-08-19',
       type: 'album',
       totalTracks: 3,
     ),
     Album(
-      id: '33333333-3333-3333-3333-333333333302',
-      title: 'Tape Loops & Rain',
-      artistId: '22222222-2222-2222-2222-222222222202',
-      artistName: 'Aura Minimal',
-      coverUrl: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=600&q=80',
-      releaseDate: '2026-05-18',
+      id: 'alb-punjabipop',
+      title: 'Punjabi Desi Vibrations',
+      artistId: 'art-diljit',
+      artistName: 'Diljit Dosanjh & Sona',
+      coverUrl: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&w=600&q=80',
+      releaseDate: '2023-01-15',
       type: 'album',
-      totalTracks: 2,
-    ),
-    Album(
-      id: '33333333-3333-3333-3333-333333333303',
-      title: 'Starlight Singularity',
-      artistId: '22222222-2222-2222-2222-222222222203',
-      artistName: 'Solstice Orbit',
-      coverUrl: 'https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?auto=format&fit=crop&w=600&q=80',
-      releaseDate: '2026-08-01',
-      type: 'album',
-      totalTracks: 2,
+      totalTracks: 3,
     ),
   ];
 
   static const List<Song> songs = [
+    // 1. Hindi Bollywood
     Song(
-      id: '44444444-4444-4444-4444-444444444401',
-      title: 'Cybernetic Skyline',
-      artistId: '22222222-2222-2222-2222-222222222201',
-      artistName: 'Neon Mirage',
-      albumId: '33333333-3333-3333-3333-333333333301',
+      id: 'song-tum-hi-ho',
+      title: 'Tum Hi Ho',
+      artistId: 'art-arijit',
+      artistName: 'Arijit Singh',
+      albumId: 'alb-aashiqui',
+      albumTitle: 'Aashiqui 2',
+      genreId: 'g-hindi',
+      genreName: 'Bollywood Romance',
+      durationSeconds: 262,
+      audioUrl: 'https://archive.org/download/afreen-afreen-coke-studio-season-9/Tum%20Hi%20Ho%20(From%20_Aashiqui%202).mp3',
+      coverUrl: 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?auto=format&fit=crop&w=600&q=80',
+      lyrics: '''Hum tere bin ab reh nahi sakte
+Tere bina kya wajood mera
+Tujhse juda agar ho jaayenge
+Toh khud se hi ho jaayenge judaa
+
+Kyunki tum hi ho, ab tum hi ho
+Zindagi ab tum hi ho
+Chain bhi, mera dard bhi
+Meri aashiqui ab tum hi ho''',
+      playsCount: 8520000,
+      likesCount: 940000,
+    ),
+    Song(
+      id: 'song-agar-tum-saath-ho',
+      title: 'Agar Tum Saath Ho',
+      artistId: 'art-arijit',
+      artistName: 'Arijit Singh & Alka Yagnik',
+      albumId: 'alb-aashiqui',
+      albumTitle: 'Tamasha',
+      genreId: 'g-hindi',
+      genreName: 'Bollywood Romance',
+      durationSeconds: 341,
+      audioUrl: 'https://archive.org/download/afreen-afreen-coke-studio-season-9/Agar%20Tum%20Saath%20Ho%20(From%20_Tamasha_).mp3',
+      coverUrl: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=600&q=80',
+      lyrics: '''Pal bhar thehar jaao, dil ye sambhal jaaye
+Kaise tumhe roka karun
+Meri taraf aata har gham phisal jaaye
+Aankhon mein tum ko bharun''',
+      playsCount: 9140000,
+      likesCount: 1020000,
+    ),
+    Song(
+      id: 'song-kabira',
+      title: 'Kabira',
+      artistId: 'art-arijit',
+      artistName: 'Arijit Singh & Tochi Raina',
+      albumId: 'alb-aashiqui',
+      albumTitle: 'Yeh Jawaani Hai Deewani',
+      genreId: 'g-hindi',
+      genreName: 'Bollywood Romance',
+      durationSeconds: 223,
+      audioUrl: 'https://archive.org/download/afreen-afreen-coke-studio-season-9/Kabira.mp3',
+      coverUrl: 'https://images.unsplash.com/photo-1465847899084-d164df4dedc6?auto=format&fit=crop&w=600&q=80',
+      lyrics: '''Kaisi teri khudgarzi
+Na dhoop chune na chhaanv
+Ban liya apna paighambar
+Tar liya tu saat samandar
+Re Kabira maan jaa''',
+      playsCount: 7300000,
+      likesCount: 810000,
+    ),
+    Song(
+      id: 'song-pee-loon',
+      title: 'Pee Loon',
+      artistId: 'art-arijit',
+      artistName: 'Mohit Chauhan',
+      albumId: 'alb-aashiqui',
+      albumTitle: 'Once Upon A Time In Mumbaai',
+      genreId: 'g-hindi',
+      genreName: 'Bollywood Romance',
+      durationSeconds: 285,
+      audioUrl: 'https://archive.org/download/afreen-afreen-coke-studio-season-9/Pee%20Loon.mp3',
+      coverUrl: 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?auto=format&fit=crop&w=600&q=80',
+      lyrics: '''Pee loon tere neele neele naino se shabnam
+Pee loon tere geele geele hothon ki sargam
+Pee loon hai peene ka mausam''',
+      playsCount: 5900000,
+      likesCount: 670000,
+    ),
+    Song(
+      id: 'song-zara-sa',
+      title: 'Zara Sa',
+      artistId: 'art-arijit',
+      artistName: 'KK (Krishnakumar Kunnath)',
+      albumId: 'alb-aashiqui',
+      albumTitle: 'Jannat',
+      genreId: 'g-hindi',
+      genreName: 'Bollywood Romance',
+      durationSeconds: 303,
+      audioUrl: 'https://archive.org/download/afreen-afreen-coke-studio-season-9/Zara%20Sa.mp3',
+      coverUrl: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=600&q=80',
+      lyrics: '''Zara sa jhoom loon main
+Arre na re na re na
+Zara sa dil mein de jagah tu
+Zara sa apna le bana''',
+      playsCount: 6420000,
+      likesCount: 730000,
+    ),
+
+    // 2. Urdu Coke Studio
+    Song(
+      id: 'song-afreen-afreen',
+      title: 'Afreen Afreen',
+      artistId: 'art-rahat',
+      artistName: 'Rahat Fateh Ali Khan & Momina',
+      albumId: 'alb-cokestudio',
+      albumTitle: 'Coke Studio Season 9',
+      genreId: 'g-urdu',
+      genreName: 'Coke Studio & Sufi',
+      durationSeconds: 400,
+      audioUrl: 'https://archive.org/download/afreen-afreen-coke-studio-season-9/Afreen%20Afreen%20(Coke%20Studio%20Season%209).mp3',
+      coverUrl: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80',
+      lyrics: '''Husn-e-jaana ki tareef mumkin nahi
+Afreen afreen, afreen afreen
+Tu bhi dekhe agar to kahe hum-nasheen
+Afreen afreen, afreen afreen''',
+      playsCount: 14200000,
+      likesCount: 1850000,
+    ),
+    Song(
+      id: 'song-tajdar-e-haram',
+      title: 'Tajdar-e-Haram',
+      artistId: 'art-atif',
+      artistName: 'Atif Aslam',
+      albumId: 'alb-cokestudio',
+      albumTitle: 'Coke Studio Season 8',
+      genreId: 'g-urdu',
+      genreName: 'Coke Studio & Sufi',
+      durationSeconds: 615,
+      audioUrl: 'https://archive.org/download/AtifAslamTajdarEHaramCokeStudioSeason8Episode1_201806/Atif%20Aslam%20Tajdar-e-Haram%20Coke%20Studio%20Season%208%20Episode%201.mp3',
+      coverUrl: 'https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?auto=format&fit=crop&w=600&q=80',
+      lyrics: '''Kismat mein meri chain se jeena likh de
+Doobe na kabhi mera safeena likh de
+Tajdar-e-haram, ho nigaah-e-karam''',
+      playsCount: 18900000,
+      likesCount: 2300000,
+    ),
+
+    // 3. Punjabi
+    Song(
+      id: 'song-enna-sona',
+      title: 'Enna Sona',
+      artistId: 'art-arijit',
+      artistName: 'Arijit Singh & A.R. Rahman',
+      albumId: 'alb-punjabipop',
+      albumTitle: 'OK Jaanu',
+      genreId: 'g-punjabi',
+      genreName: 'Punjabi Hits',
+      durationSeconds: 213,
+      audioUrl: 'https://archive.org/download/afreen-afreen-coke-studio-season-9/Enna%20Sona.mp3',
+      coverUrl: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&w=600&q=80',
+      lyrics: '''Enna sona kyun Rabb ne banaya
+Aavan jaavan te main yaara nu manavan
+Kol hove te sekh lagda ae
+Door jaave te dil jalda ae''',
+      playsCount: 7800000,
+      likesCount: 890000,
+    ),
+    Song(
+      id: 'song-ambarsariya',
+      title: 'Ambarsariya',
+      artistId: 'art-diljit',
+      artistName: 'Sona Mohapatra',
+      albumId: 'alb-punjabipop',
+      albumTitle: 'Fukrey',
+      genreId: 'g-punjabi',
+      genreName: 'Punjabi Hits',
+      durationSeconds: 248,
+      audioUrl: 'https://archive.org/download/afreen-afreen-coke-studio-season-9/Ambarsariya.mp3',
+      coverUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80',
+      lyrics: '''Ambarsariya mundeya ve kacchiyaan kaliyaan na tod
+Teri ma ne boleya mujhe teekha teekha bol
+Gori gori baahon mein har dam
+Chudiyaan khankaati hoon''',
+      playsCount: 5120000,
+      likesCount: 590000,
+    ),
+
+    // 4. Bengali
+    Song(
+      id: 'song-aguner-poroshmoni',
+      title: 'Aguner Poroshmoni',
+      artistId: 'art-arijit',
+      artistName: 'Rabindranath Tagore Classical',
+      albumId: 'alb-punjabipop',
+      albumTitle: 'Sonar Bangla',
+      genreId: 'g-bengali',
+      genreName: 'Bengali Melody',
+      durationSeconds: 245,
+      audioUrl: 'https://archive.org/download/ClassicSongVolume1/Aguner%20Poroshmoni.mp3',
+      coverUrl: 'https://images.unsplash.com/photo-1487180144351-b8472da7d491?auto=format&fit=crop&w=600&q=80',
+      lyrics: '''Aguner poroshmoni chhowao praane
+E jibon punyo koro dahon-daane
+Aguner poroshmoni chhowao praane''',
+      playsCount: 2450000,
+      likesCount: 310000,
+    ),
+
+    // 5. English Pop
+    Song(
+      id: 'song-cybernetic-skyline',
+      title: 'Cybernetic Skyline (After Hours)',
+      artistId: 'art-arijit',
+      artistName: 'The Weeknd Vibe (Global Synth)',
+      albumId: 'alb-aashiqui',
       albumTitle: 'Midnight Odyssey',
-      genreId: '11111111-1111-1111-1111-111111111101',
-      genreName: 'Synthwave',
+      genreId: 'g-pop',
+      genreName: 'Hollywood & Global Pop',
       durationSeconds: 372,
       audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
       coverUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80',
-      lyrics: '''[00:15.00] Cruising through the neon haze
-[00:30.00] Electric shadows in purple glaze
-[01:00.00] Speeding through the grid tonight
-[01:30.00] Guided by the violet light
-[02:00.00] GAAN plays the pulse of tomorrow
-[02:30.00] Transcending digital sorrow''',
-      playsCount: 452100,
-      likesCount: 38200,
-    ),
-    Song(
-      id: '44444444-4444-4444-4444-444444444402',
-      title: 'Neon Highway 86',
-      artistId: '22222222-2222-2222-2222-222222222201',
-      artistName: 'Neon Mirage',
-      albumId: '33333333-3333-3333-3333-333333333301',
-      albumTitle: 'Midnight Odyssey',
-      genreId: '11111111-1111-1111-1111-111111111101',
-      genreName: 'Synthwave',
-      durationSeconds: 423,
-      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
-      coverUrl: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&w=600&q=80',
-      lyrics: '''[00:20.00] Midnight highway stretches on
-[00:45.00] Chasing the horizon until the dawn
-[01:25.00] Synthetic resonance fills the air
-[02:10.00] Drifting freely without a care''',
-      playsCount: 320140,
-      likesCount: 24150,
-    ),
-    Song(
-      id: '44444444-4444-4444-4444-444444444403',
-      title: 'Midnight Echoes',
-      artistId: '22222222-2222-2222-2222-222222222201',
-      artistName: 'Neon Mirage',
-      albumId: '33333333-3333-3333-3333-333333333301',
-      albumTitle: 'Midnight Odyssey',
-      genreId: '11111111-1111-1111-1111-111111111101',
-      genreName: 'Synthwave',
-      durationSeconds: 348,
-      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
-      coverUrl: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80',
-      lyrics: '''[00:10.00] Lost in the reverberation
-[00:40.00] A subterranean sensation
-[01:15.00] Basslines pulsing in dark AMOLED
-[01:50.00] Every memory softly unsaid''',
-      playsCount: 198300,
-      likesCount: 16500,
-    ),
-    Song(
-      id: '44444444-4444-4444-4444-444444444404',
-      title: 'Late Night Study Session',
-      artistId: '22222222-2222-2222-2222-222222222202',
-      artistName: 'Aura Minimal',
-      albumId: '33333333-3333-3333-3333-333333333302',
-      albumTitle: 'Tape Loops & Rain',
-      genreId: '11111111-1111-1111-1111-111111111102',
-      genreName: 'Lo-Fi Chill',
-      durationSeconds: 302,
-      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
-      coverUrl: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=600&q=80',
-      lyrics: '[Instrumental Lo-Fi Chill Beats]',
-      playsCount: 612400,
-      likesCount: 52400,
-    ),
-    Song(
-      id: '44444444-4444-4444-4444-444444444405',
-      title: 'Coffee in the Rain',
-      artistId: '22222222-2222-2222-2222-222222222202',
-      artistName: 'Aura Minimal',
-      albumId: '33333333-3333-3333-3333-333333333302',
-      albumTitle: 'Tape Loops & Rain',
-      genreId: '11111111-1111-1111-1111-111111111102',
-      genreName: 'Lo-Fi Chill',
-      durationSeconds: 284,
-      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3',
-      coverUrl: 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?auto=format&fit=crop&w=600&q=80',
-      lyrics: '[Cozy Lo-Fi Rain Instrumental]',
-      playsCount: 490200,
-      likesCount: 41100,
-    ),
-    Song(
-      id: '44444444-4444-4444-4444-444444444406',
-      title: 'Cosmic Aurora',
-      artistId: '22222222-2222-2222-2222-222222222203',
-      artistName: 'Solstice Orbit',
-      albumId: '33333333-3333-3333-3333-333333333303',
-      albumTitle: 'Starlight Singularity',
-      genreId: '11111111-1111-1111-1111-111111111104',
-      genreName: 'Deep Ambient',
-      durationSeconds: 395,
-      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3',
-      coverUrl: 'https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?auto=format&fit=crop&w=600&q=80',
-      lyrics: '''[00:25.00] Across the interstellar dust
-[00:55.00] In starry constellations we trust
-[01:40.00] Floating above gravitational tides
-[02:20.00] The cosmic symphony abides''',
-      playsCount: 284300,
-      likesCount: 21800,
-    ),
-    Song(
-      id: '44444444-4444-4444-4444-444444444407',
-      title: 'Solar Flare Groove',
-      artistId: '22222222-2222-2222-2222-222222222203',
-      artistName: 'Solstice Orbit',
-      albumId: '33333333-3333-3333-3333-333333333303',
-      albumTitle: 'Starlight Singularity',
-      genreId: '11111111-1111-1111-1111-111111111103',
-      genreName: 'Cyberpunk Electro',
-      durationSeconds: 360,
-      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3',
-      coverUrl: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=600&q=80',
-      lyrics: '''[00:15.00] Ignition sparks the sound machine
-[00:45.00] The wildest rhythm you have seen
-[01:30.00] Feel the heat ignite your soul
-[02:00.00] Electric cadence takes control''',
-      playsCount: 175200,
-      likesCount: 14300,
-    ),
-    Song(
-      id: '44444444-4444-4444-4444-444444444408',
-      title: 'Whispering Pines',
-      artistId: '22222222-2222-2222-2222-222222222204',
-      artistName: 'Komorebi Sound',
-      genreId: '11111111-1111-1111-1111-111111111106',
-      genreName: 'Acoustic Serene',
-      durationSeconds: 315,
-      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-      coverUrl: 'https://images.unsplash.com/photo-1487180144351-b8472da7d491?auto=format&fit=crop&w=600&q=80',
-      lyrics: '[Acoustic Forest Ambient Instrumental]',
-      playsCount: 128900,
-      likesCount: 11200,
+      lyrics: '''Cruising through the neon haze
+Electric shadows in purple glaze
+Speeding through the grid tonight
+Guided by the violet light''',
+      playsCount: 6700000,
+      likesCount: 820000,
     ),
   ];
 }
