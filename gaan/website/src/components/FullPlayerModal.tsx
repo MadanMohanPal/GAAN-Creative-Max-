@@ -140,8 +140,8 @@ export const FullPlayerModal = () => {
                 alt={currentSong.title}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
-              <div className="absolute top-3 right-3 px-2 py-1 rounded bg-black/60 backdrop-blur-md text-[10px] font-bold uppercase tracking-wider text-purple-300 border border-purple-500/30">
-                Hi-Res Audio
+              <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-md text-[10px] font-black uppercase tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 border border-purple-500/40">
+                Creative Max Hi-Res
               </div>
             </div>
 

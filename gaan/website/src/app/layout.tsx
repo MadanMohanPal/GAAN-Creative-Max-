@@ -7,8 +7,8 @@ import { MiniPlayer } from "@/components/MiniPlayer";
 import { FullPlayerModal } from "@/components/FullPlayerModal";
 
 export const metadata: Metadata = {
-  title: "GAAN — Stream in True AMOLED",
-  description: "High-resolution music streaming platform with true AMOLED dark UI and seamless playback.",
+  title: "GAAN by Creative Max — Stream in True AMOLED",
+  description: "High-resolution music streaming ecosystem engineered by Creative Max with true AMOLED dark UI and lossless audio.",
   icons: {
     icon: "/icon.svg",
   },

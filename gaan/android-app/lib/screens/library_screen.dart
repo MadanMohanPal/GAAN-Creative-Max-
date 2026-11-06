@@ -13,8 +13,96 @@ class LibraryScreen extends StatefulWidget {
 }
 
 class _LibraryScreenState extends State<LibraryScreen> {
-  String _activeTab = 'Liked';
-  final List<String> _tabs = ['Liked', 'Playlists', 'Albums', 'Artists'];
+  String _activeTab = 'All Songs';
+  final List<String> _tabs = ['All Songs', 'Liked', 'Playlists', 'Albums'];
+  final List<Map<String, dynamic>> _customPlaylists = [
+    {
+      'title': 'Bollywood Romance & Sufi',
+      'subtitle': 'Curated by Creative Max',
+      'icon': Icons.favorite,
+      'trackIndex': 0,
+    },
+    {
+      'title': 'Coke Studio Gems',
+      'subtitle': 'Atif, Rahat & Momina',
+      'icon': Icons.music_note,
+      'trackIndex': 5,
+    },
+    {
+      'title': 'Punjabi Road Trip',
+      'subtitle': 'Enna Sona, Ambarsariya',
+      'icon': Icons.drive_eta,
+      'trackIndex': 8,
+    },
+  ];
+
+  void _showCreatePlaylistDialog() {
+    final controller = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: GaanTheme.surfaceBlack,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: const BorderSide(color: GaanTheme.primaryPurple),
+        ),
+        title: const Row(
+          children: [
+            Icon(Icons.playlist_add, color: GaanTheme.primaryPurple),
+            SizedBox(width: 8),
+            Text('Create Playlist', style: TextStyle(color: Colors.white, fontSize: 18)),
+          ],
+        ),
+        content: TextField(
+          controller: controller,
+          style: const TextStyle(color: Colors.white),
+          decoration: const InputDecoration(
+            hintText: 'Enter playlist title...',
+            hintStyle: TextStyle(color: GaanTheme.textMuted),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: GaanTheme.borderCharcoal),
+            ),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: GaanTheme.primaryPurple),
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel', style: TextStyle(color: GaanTheme.textMuted)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: GaanTheme.primaryPurple,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+            onPressed: () {
+              final text = controller.text.trim();
+              if (text.isNotEmpty) {
+                setState(() {
+                  _customPlaylists.insert(0, {
+                    'title': text,
+                    'subtitle': 'Created by user • Creative Max Engine',
+                    'icon': Icons.queue_music,
+                    'trackIndex': 1,
+                  });
+                });
+                Navigator.pop(ctx);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    backgroundColor: GaanTheme.primaryPurple,
+                    content: Text('Playlist "$text" created!'),
+                  ),
+                );
+              }
+            },
+            child: const Text('Create', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,16 +112,27 @@ class _LibraryScreenState extends State<LibraryScreen> {
     return Scaffold(
       backgroundColor: GaanTheme.amoledBlack,
       appBar: AppBar(
-        title: const Text('Library'),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Library', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+            Text(
+              'Engineered by Creative Max',
+              style: TextStyle(
+                color: GaanTheme.fuchsiaNeon.withOpacity(0.9),
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1.2,
+              ),
+            ),
+          ],
+        ),
         backgroundColor: GaanTheme.amoledBlack,
         actions: [
           IconButton(
-            icon: const Icon(Icons.add, color: Colors.white),
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Create Playlist dialog (Phase 1)')),
-              );
-            },
+            icon: const Icon(Icons.add_circle_outline, color: GaanTheme.primaryPurple),
+            onPressed: _showCreatePlaylistDialog,
+            tooltip: 'Create New Playlist',
           ),
         ],
       ),
@@ -63,7 +162,11 @@ class _LibraryScreenState extends State<LibraryScreen> {
                       ),
                     ),
                     child: Text(
-                      tab,
+                      tab == 'Liked'
+                          ? 'Liked (${likedSongs.length})'
+                          : tab == 'All Songs'
+                              ? 'All Songs (${SampleCatalogue.songs.length})'
+                              : tab,
                       style: TextStyle(
                         color: isSelected ? Colors.white : GaanTheme.textSecondary,
                         fontSize: 12,
@@ -80,61 +183,83 @@ class _LibraryScreenState extends State<LibraryScreen> {
 
           // Content
           Expanded(
-            child: _activeTab == 'Liked'
-                ? (likedSongs.isNotEmpty
-                    ? ListView.builder(
-                        padding: const EdgeInsets.only(bottom: 90),
-                        itemCount: likedSongs.length,
-                        itemBuilder: (context, index) {
-                          return SongTile(
-                            song: likedSongs[index],
-                            playlistContext: likedSongs,
-                          );
-                        },
-                      )
-                    : const Center(
-                        child: Text(
-                          'No liked songs yet',
-                          style: TextStyle(color: GaanTheme.textMuted),
-                        ),
-                      ))
-                : _activeTab == 'Playlists'
-                    ? ListView(
-                        padding: const EdgeInsets.fromLTRB(16, 8, 16, 90),
-                        children: [
-                          _buildPlaylistItem(
-                            'Night Drive: Neon Horizons',
-                            '4 songs • Curated by GAAN',
-                            Icons.drive_eta,
-                            () => player.playSong(SampleCatalogue.songs[0]),
-                          ),
-                          const SizedBox(height: 12),
-                          _buildPlaylistItem(
-                            'Deep AMOLED Chill',
-                            '3 songs • Pure black relaxation',
-                            Icons.nightlight_round,
-                            () => player.playSong(SampleCatalogue.songs[3]),
-                          ),
-                        ],
-                      )
-                    : ListView(
-                        padding: const EdgeInsets.fromLTRB(16, 8, 16, 90),
-                        children: SampleCatalogue.albums.map((album) {
-                          return ListTile(
-                            leading: ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.network(
-                                album.coverUrl,
-                                width: 48,
-                                height: 48,
-                                fit: BoxFit.cover,
-                              ),
+            child: _activeTab == 'All Songs'
+                ? ListView.builder(
+                    padding: const EdgeInsets.only(bottom: 90),
+                    itemCount: SampleCatalogue.songs.length,
+                    itemBuilder: (context, index) {
+                      return SongTile(
+                        song: SampleCatalogue.songs[index],
+                        playlistContext: SampleCatalogue.songs,
+                      );
+                    },
+                  )
+                : _activeTab == 'Liked'
+                    ? (likedSongs.isNotEmpty
+                        ? ListView.builder(
+                            padding: const EdgeInsets.only(bottom: 90),
+                            itemCount: likedSongs.length,
+                            itemBuilder: (context, index) {
+                              return SongTile(
+                                song: likedSongs[index],
+                                playlistContext: likedSongs,
+                              );
+                            },
+                          )
+                        : const Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.favorite_border, color: GaanTheme.textMuted, size: 48),
+                                SizedBox(height: 8),
+                                Text(
+                                  'No liked songs yet',
+                                  style: TextStyle(color: GaanTheme.textMuted),
+                                ),
+                              ],
                             ),
-                            title: Text(album.title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                            subtitle: Text('${album.artistName} • ${album.totalTracks} songs', style: const TextStyle(color: GaanTheme.textMuted)),
-                          );
-                        }).toList(),
-                      ),
+                          ))
+                    : _activeTab == 'Playlists'
+                        ? ListView(
+                            padding: const EdgeInsets.fromLTRB(16, 8, 16, 90),
+                            children: _customPlaylists.map((pl) {
+                              final idx = pl['trackIndex'] as int;
+                              final safeTrack = idx < SampleCatalogue.songs.length
+                                  ? SampleCatalogue.songs[idx]
+                                  : SampleCatalogue.songs[0];
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 12),
+                                child: _buildPlaylistItem(
+                                  pl['title'] as String,
+                                  pl['subtitle'] as String,
+                                  pl['icon'] as IconData,
+                                  () => player.playSong(safeTrack),
+                                ),
+                              );
+                            }).toList(),
+                          )
+                        : ListView(
+                            padding: const EdgeInsets.fromLTRB(16, 8, 16, 90),
+                            children: SampleCatalogue.albums.map((album) {
+                              return ListTile(
+                                leading: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.network(
+                                    album.coverUrl,
+                                    width: 48,
+                                    height: 48,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                title: Text(album.title,
+                                    style: const TextStyle(
+                                        color: Colors.white, fontWeight: FontWeight.bold)),
+                                subtitle: Text(
+                                    '${album.artistName} • ${album.totalTracks} songs',
+                                    style: const TextStyle(color: GaanTheme.textMuted)),
+                              );
+                            }).toList(),
+                          ),
           ),
         ],
       ),

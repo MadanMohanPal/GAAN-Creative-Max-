@@ -24,13 +24,13 @@ export const Sidebar = () => {
             <span className="font-extrabold text-lg text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-fuchsia-400">G</span>
           </div>
         </div>
-        <div>
-          <div className="flex items-center gap-1.5">
-            <span className="font-black text-xl tracking-wider text-white">GAAN</span>
-            <span className="px-1.5 py-0.5 text-[9px] font-bold uppercase rounded bg-purple-900/50 text-purple-300 border border-purple-700/50">PRO</span>
+          <div>
+            <div className="flex items-center gap-1.5">
+              <span className="font-black text-xl tracking-wider text-white">GAAN</span>
+              <span className="px-1.5 py-0.5 text-[9px] font-bold uppercase rounded bg-gradient-to-r from-purple-600 to-pink-600 text-white">CREATIVE MAX</span>
+            </div>
+            <span className="text-[10px] text-zinc-400 tracking-wide font-medium">By Creative Max Studio</span>
           </div>
-          <span className="text-[11px] text-zinc-500 tracking-wide">TRUE AMOLED MUSIC</span>
-        </div>
       </div>
 
       {/* Main Navigation */}
@@ -96,13 +96,13 @@ export const Sidebar = () => {
 
       {/* AMOLED Quality Badge & New Playlist */}
       <div className="p-4 border-t border-[#171722] space-y-3">
-        <button
-          onClick={() => alert('Create playlist modal (Phase 1)')}
+        <Link
+          href="/library"
           className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-purple-600/10 hover:bg-purple-600/20 text-purple-300 text-xs font-semibold border border-purple-500/30 transition-all"
         >
           <PlusCircle className="w-4 h-4 text-purple-400" />
-          New Playlist
-        </button>
+          Manage Playlists
+        </Link>
         <div className="bg-[#0c0c12] rounded-xl p-3 border border-zinc-800/60">
           <div className="flex items-center justify-between text-[11px] text-zinc-400 font-medium">
             <span>Audio Engine</span>

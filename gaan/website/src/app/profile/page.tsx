@@ -123,6 +123,24 @@ export default function ProfilePage() {
           </button>
         </div>
       </section>
+
+      {/* Creative Max Engineering Credit */}
+      <section className="p-6 rounded-3xl bg-gradient-to-r from-[#170e2b] via-[#0f0c1c] to-[#08080f] border border-purple-800/40 shadow-xl">
+        <div className="flex items-center justify-between">
+          <div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-purple-400">
+              Architecture & Production Credits
+            </span>
+            <h3 className="text-lg font-black text-white mt-0.5">Designed & Developed by Creative Max</h3>
+            <p className="text-xs text-zinc-400 mt-1">
+              GAAN Music Ecosystem • High-Fidelity Streaming Engine & AMOLED Dark Architecture
+            </p>
+          </div>
+          <div className="px-4 py-2 rounded-2xl bg-gradient-to-r from-purple-600 to-pink-600 font-black text-xs text-white shadow-purple-glow">
+            Creative Max
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

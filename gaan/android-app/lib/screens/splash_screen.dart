@@ -109,6 +109,16 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                             letterSpacing: 2.0,
                           ),
                         ),
+                        const SizedBox(height: 4),
+                        const Text(
+                          'CRAFTED BY CREATIVE MAX',
+                          style: TextStyle(
+                            color: GaanTheme.fuchsiaNeon,
+                            fontSize: 9,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 2.5,
+                          ),
+                        ),
                         const SizedBox(height: 48),
                         SizedBox(
                           width: 24,

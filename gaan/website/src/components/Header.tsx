@@ -51,6 +51,11 @@ export const Header = () => {
 
       {/* User Actions */}
       <div className="flex items-center gap-3">
+        <div className="hidden lg:flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-purple-950/60 to-pink-950/60 border border-purple-800/40 text-[11px] font-bold text-purple-300">
+          <Sparkles className="w-3 h-3 text-pink-400" />
+          <span>By Creative Max</span>
+        </div>
+
         <Link
           href="/explore"
           className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-purple-950/40 hover:bg-purple-900/50 text-purple-300 text-xs font-semibold border border-purple-800/40 transition-all"
