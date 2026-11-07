@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../theme/gaan_theme.dart';
 import '../widgets/brand_logo.dart';
-import 'onboarding_screen.dart';
+import 'main_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -34,14 +34,14 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
     _animController.forward();
 
-    Timer(const Duration(milliseconds: 2200), () {
+    Timer(const Duration(milliseconds: 1400), () {
       if (mounted) {
         Navigator.of(context).pushReplacement(
           PageRouteBuilder(
-            pageBuilder: (context, anim, secAnim) => const OnboardingScreen(),
+            pageBuilder: (context, anim, secAnim) => const MainScreen(),
             transitionsBuilder: (context, anim, secAnim, child) =>
                 FadeTransition(opacity: anim, child: child),
-            transitionDuration: const Duration(milliseconds: 600),
+            transitionDuration: const Duration(milliseconds: 500),
           ),
         );
       }

@@ -18,6 +18,8 @@ interface PlayerContextType {
   queueIndex: number;
   isFullPlayerOpen: boolean;
   likedSongIds: Set<string>;
+  history: Song[];
+  downloadedSongs: Song[];
   playSong: (song: Song, customQueue?: Song[]) => void;
   togglePlay: () => void;
   pauseSong: () => void;
@@ -31,6 +33,8 @@ interface PlayerContextType {
   cycleRepeat: () => void;
   setFullPlayerOpen: (open: boolean) => void;
   toggleLike: (songId: string) => void;
+  downloadSong: (song: Song) => Promise<void>;
+  removeDownloadedSong: (songId: string) => void;
 }
 
 const PlayerContext = createContext<PlayerContextType | null>(null);
@@ -49,7 +53,27 @@ export const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
   const [queue, setQueue] = useState<Song[]>(SONGS);
   const [queueIndex, setQueueIndex] = useState<number>(0);
   const [isFullPlayerOpen, setFullPlayerOpen] = useState<boolean>(false);
-  const [likedSongIds, setLikedSongIds] = useState<Set<string>>(new Set([SONGS[0].id, SONGS[3].id]));
+  const [likedSongIds, setLikedSongIds] = useState<Set<string>>(new Set([SONGS[0].id, SONGS[1].id, SONGS[2].id]));
+  const [history, setHistory] = useState<Song[]>([]);
+  const [downloadedSongs, setDownloadedSongs] = useState<Song[]>([]);
+
+  // Load persistence from localStorage
+  useEffect(() => {
+    try {
+      const savedLikes = localStorage.getItem('gaan_liked_songs');
+      if (savedLikes) {
+        setLikedSongIds(new Set(JSON.parse(savedLikes)));
+      }
+      const savedHistory = localStorage.getItem('gaan_listening_history');
+      if (savedHistory) {
+        setHistory(JSON.parse(savedHistory));
+      }
+      const savedDownloads = localStorage.getItem('gaan_downloaded_songs');
+      if (savedDownloads) {
+        setDownloadedSongs(JSON.parse(savedDownloads));
+      }
+    } catch (e) {}
+  }, []);
 
   // Initialize HTMLAudioElement
   useEffect(() => {
@@ -81,13 +105,13 @@ export const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, []);
 
-  // Update MediaSession controls for web background/lockscreen media player
+  // MediaSession controls
   useEffect(() => {
     if (typeof window !== 'undefined' && 'mediaSession' in navigator && currentSong) {
       navigator.mediaSession.metadata = new MediaMetadata({
         title: currentSong.title,
         artist: currentSong.artist_name,
-        album: currentSong.album_title || 'GAAN Music',
+        album: currentSong.album_title || 'GAAN Master by Creative Max',
         artwork: [
           { src: currentSong.cover_url, sizes: '512x512', type: 'image/jpeg' },
         ],
@@ -103,7 +127,7 @@ export const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [currentSong]);
 
-  // Audio track end handling
+  // Handle song ending
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -128,6 +152,15 @@ export const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
     setCurrentSong(song);
     setQueue(newQueue);
     setQueueIndex(idx >= 0 ? idx : 0);
+
+    // Record listening history
+    setHistory(prev => {
+      const updated = [song, ...prev.filter(s => s.id !== song.id)].slice(0, 30);
+      try {
+        localStorage.setItem('gaan_listening_history', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
 
     if (audioRef.current) {
       audioRef.current.src = song.audio_url;
@@ -178,7 +211,7 @@ export const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
       nextIdx = queueIndex + 1;
       if (nextIdx >= queue.length) {
         if (repeatMode === 'all') nextIdx = 0;
-        else return; // Stop at end of queue
+        else return;
       }
     }
 
@@ -252,7 +285,44 @@ export const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
       const next = new Set(prev);
       if (next.has(songId)) next.delete(songId);
       else next.add(songId);
+      try {
+        localStorage.setItem('gaan_liked_songs', JSON.stringify(Array.from(next)));
+      } catch (e) {}
       return next;
+    });
+  };
+
+  // One-click Song Download engine
+  const downloadSong = async (song: Song) => {
+    const safeTitle = `${song.title} - ${song.artist_name}`;
+    const downloadEndpoint = `/api/download?url=${encodeURIComponent(song.audio_url)}&name=${encodeURIComponent(safeTitle)}`;
+
+    // Trigger direct browser download
+    const link = document.createElement('a');
+    link.href = downloadEndpoint;
+    link.download = `${safeTitle}.mp3`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    // Save into Downloaded songs list for Offline library
+    setDownloadedSongs(prev => {
+      if (prev.some(s => s.id === song.id)) return prev;
+      const updated = [song, ...prev];
+      try {
+        localStorage.setItem('gaan_downloaded_songs', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+  };
+
+  const removeDownloadedSong = (songId: string) => {
+    setDownloadedSongs(prev => {
+      const updated = prev.filter(s => s.id !== songId);
+      try {
+        localStorage.setItem('gaan_downloaded_songs', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
     });
   };
 
@@ -271,6 +341,8 @@ export const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
         queueIndex,
         isFullPlayerOpen,
         likedSongIds,
+        history,
+        downloadedSongs,
         playSong,
         togglePlay,
         pauseSong,
@@ -284,6 +356,8 @@ export const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
         cycleRepeat,
         setFullPlayerOpen,
         toggleLike,
+        downloadSong,
+        removeDownloadedSong,
       }}
     >
       {children}

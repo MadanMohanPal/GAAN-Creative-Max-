@@ -1,9 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Song } from '@/lib/catalogue';
 import { usePlayer } from './PlayerContext';
-import { Play, Pause, Heart, MoreVertical } from 'lucide-react';
+import { Play, Pause, Heart, Download, Check } from 'lucide-react';
 
 interface SongCardProps {
   song: Song;
@@ -11,10 +11,12 @@ interface SongCardProps {
 }
 
 export const SongCard: React.FC<SongCardProps> = ({ song, playlistContext }) => {
-  const { currentSong, isPlaying, playSong, togglePlay, likedSongIds, toggleLike } = usePlayer();
+  const { currentSong, isPlaying, playSong, togglePlay, likedSongIds, toggleLike, downloadSong, downloadedSongs } = usePlayer();
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const isCurrent = currentSong?.id === song.id;
   const isLiked = likedSongIds.has(song.id);
+  const isDownloaded = downloadedSongs.some(s => s.id === song.id);
 
   const handlePlayClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -23,6 +25,13 @@ export const SongCard: React.FC<SongCardProps> = ({ song, playlistContext }) => 
     } else {
       playSong(song, playlistContext);
     }
+  };
+
+  const handleDownloadClick = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsDownloading(true);
+    await downloadSong(song);
+    setTimeout(() => setIsDownloading(false), 2000);
   };
 
   return (
@@ -56,15 +65,35 @@ export const SongCard: React.FC<SongCardProps> = ({ song, playlistContext }) => 
           </button>
         </div>
 
-        {/* Like quick action */}
+        {/* Top-right: Like button */}
         <button
           onClick={(e) => {
             e.stopPropagation();
             toggleLike(song.id);
           }}
           className="absolute top-2.5 right-2.5 p-1.5 rounded-full bg-black/60 backdrop-blur-md opacity-0 group-hover:opacity-100 hover:bg-black/90 transition-all text-white"
+          title={isLiked ? 'Unlike' : 'Like'}
         >
           <Heart className={`w-3.5 h-3.5 ${isLiked ? 'fill-pink-500 text-pink-500' : 'text-zinc-300'}`} />
+        </button>
+
+        {/* Top-left: One-Click Download button */}
+        <button
+          onClick={handleDownloadClick}
+          className={`absolute top-2.5 left-2.5 p-1.5 rounded-full backdrop-blur-md transition-all ${
+            isDownloaded
+              ? 'bg-emerald-600/90 text-white opacity-100'
+              : 'bg-black/60 text-zinc-300 opacity-0 group-hover:opacity-100 hover:bg-purple-600 hover:text-white'
+          }`}
+          title={isDownloaded ? 'Downloaded Offline' : '1-Click Download MP3'}
+        >
+          {isDownloading ? (
+            <span className="w-3.5 h-3.5 block animate-spin text-[10px]">⏳</span>
+          ) : isDownloaded ? (
+            <Check className="w-3.5 h-3.5 text-white" />
+          ) : (
+            <Download className="w-3.5 h-3.5" />
+          )}
         </button>
       </div>
 
@@ -75,8 +104,8 @@ export const SongCard: React.FC<SongCardProps> = ({ song, playlistContext }) => 
         </h4>
         <p className="text-xs text-zinc-400 truncate mt-0.5">{song.artist_name}</p>
         <div className="flex items-center justify-between mt-2 pt-2 border-t border-zinc-900/40 text-[11px] text-zinc-500">
-          <span>{Math.floor(song.duration_seconds / 60)}:{String(song.duration_seconds % 60).padStart(2, '0')}</span>
-          <span className="capitalize">{song.genre_name || 'Stream'}</span>
+          <span className="font-mono">{Math.floor(song.duration_seconds / 60)}:{String(song.duration_seconds % 60).padStart(2, '0')}</span>
+          <span className="text-[10px] uppercase font-bold text-purple-400/80">{song.language}</span>
         </div>
       </div>
     </div>

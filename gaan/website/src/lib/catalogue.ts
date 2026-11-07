@@ -1,3 +1,6 @@
+// GAAN — Central Curated Catalogue & Types
+// Engineered & Mastered by Creative Max
+
 export interface Song {
   id: string;
   title: string;
@@ -22,589 +25,335 @@ export interface Artist {
   name: string;
   bio: string;
   image_url: string;
-  header_url?: string;
   verified: boolean;
   monthly_listeners: number;
-  language: string;
+  language?: string;
 }
 
 export interface Album {
   id: string;
   title: string;
   artist_id: string;
-  artist_name?: string;
+  artist_name: string;
   cover_url: string;
   release_date: string;
   type: 'album' | 'single' | 'ep';
   total_tracks: number;
-  language: string;
+  language?: string;
 }
 
 export interface Genre {
   id: string;
   name: string;
   slug: string;
+  description: string;
+  color_hex: string;
   image_url: string;
-  accent_color: string;
-  language?: string;
 }
 
 export const GENRES: Genre[] = [
-  {
-    id: 'g-hindi',
-    name: 'Bollywood Romance',
-    slug: 'bollywood',
-    image_url: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=600&q=80',
-    accent_color: '#EC4899',
-    language: 'Hindi',
-  },
-  {
-    id: 'g-urdu',
-    name: 'Coke Studio & Sufi',
-    slug: 'urdu-sufi',
-    image_url: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80',
-    accent_color: '#8B5CF6',
-    language: 'Urdu',
-  },
-  {
-    id: 'g-punjabi',
-    name: 'Punjabi Hits',
-    slug: 'punjabi',
-    image_url: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&w=600&q=80',
-    accent_color: '#F59E0B',
-    language: 'Punjabi',
-  },
-  {
-    id: 'g-bengali',
-    name: 'Bengali Melody',
-    slug: 'bengali',
-    image_url: 'https://images.unsplash.com/photo-1487180144351-b8472da7d491?auto=format&fit=crop&w=600&q=80',
-    accent_color: '#10B981',
-    language: 'Bengali',
-  },
-  {
-    id: 'g-pop',
-    name: 'Hollywood & Global Pop',
-    slug: 'english-pop',
-    image_url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80',
-    accent_color: '#3B82F6',
-    language: 'English',
-  },
-  {
-    id: 'g-lofi',
-    name: 'Late Night Chill & Lo-Fi',
-    slug: 'lo-fi',
-    image_url: 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?auto=format&fit=crop&w=600&q=80',
-    accent_color: '#A855F7',
-    language: 'All',
-  },
+  { id: 'g-1', name: 'Bollywood Romance', slug: 'bollywood-romance', description: 'Soulful Hindi movie love anthems', color_hex: '#8B5CF6', image_url: 'https://c.saavncdn.com/430/Aashiqui-2-Hindi-2013-500x500.jpg' },
+  { id: 'g-2', name: 'Coke Studio & Sufi', slug: 'coke-studio', description: 'Mystical sufi harmonies and live acoustics', color_hex: '#D946EF', image_url: 'https://c.saavncdn.com/728/Afreen-Afreen-Urdu-2022-20220802031813-500x500.webp' },
+  { id: 'g-3', name: 'Punjabi Desi Heat', slug: 'punjabi-hits', description: 'High-energy bhangra and melodic hip-hop', color_hex: '#F59E0B', image_url: 'https://c.saavncdn.com/609/Moosetape-Punjabi-2021-20260626155141-500x500.webp' },
+  { id: 'g-4', name: 'Bengali Classics', slug: 'bengali-classics', description: 'Rabindra Sangeet & timeless modern melodies', color_hex: '#10B981', image_url: 'https://c.saavncdn.com/358/Aguner-Poroshmoni-Bengali-2021-20211006110024-500x500.webp' },
+  { id: 'g-5', name: 'Global Pop & Synth', slug: 'global-pop', description: 'Billboard chart toppers & retro synthwave', color_hex: '#EC4899', image_url: 'https://c.saavncdn.com/820/Blinding-Lights-English-2020-20200912094411-500x500.webp' },
+  { id: 'g-6', name: 'Lo-Fi Chill & Night Drive', slug: 'lo-fi-chill', description: 'Deep night relaxation with warm beats', color_hex: '#6366F1', image_url: 'https://c.saavncdn.com/871/Brahmastra-Original-Motion-Picture-Soundtrack-Hindi-2022-20221006155213-500x500.webp' },
 ];
 
 export const ARTISTS: Artist[] = [
-  {
-    id: 'art-arijit',
-    name: 'Arijit Singh',
-    bio: 'The undisputed voice of modern Bollywood melodies and romantic anthems with over 100M monthly listeners.',
-    image_url: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=600&q=80',
-    header_url: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1200&q=80',
-    verified: true,
-    monthly_listeners: 42800000,
-    language: 'Hindi',
-  },
-  {
-    id: 'art-atif',
-    name: 'Atif Aslam',
-    bio: 'Pakistani global vocal icon revered for heartfelt Sufi and romantic blockbuster tracks.',
-    image_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80',
-    header_url: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1200&q=80',
-    verified: true,
-    monthly_listeners: 26400000,
-    language: 'Urdu',
-  },
-  {
-    id: 'art-rahat',
-    name: 'Rahat Fateh Ali Khan & Momina',
-    bio: 'Coke Studio legends bringing qawwali heritage to modern viral acoustic music.',
-    image_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80',
-    header_url: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&w=1200&q=80',
-    verified: true,
-    monthly_listeners: 18900000,
-    language: 'Urdu',
-  },
-  {
-    id: 'art-diljit',
-    name: 'Diljit Dosanjh',
-    bio: 'Punjabi music powerhouse and global Coachella headliner pioneering Punjabi Pop worldwide.',
-    image_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80',
-    header_url: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&w=1200&q=80',
-    verified: true,
-    monthly_listeners: 21500000,
-    language: 'Punjabi',
-  },
-  {
-    id: 'art-hemanta',
-    name: 'Hemanta Mukherjee',
-    bio: 'Legendary Indian singer and composer renowned for evergreen Bengali and Rabindra Sangeet masterpieces.',
-    image_url: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80',
-    verified: true,
-    monthly_listeners: 4300000,
-    language: 'Bengali',
-  },
-  {
-    id: 'art-kk',
-    name: 'KK (Krishnakumar Kunnath)',
-    bio: 'Iconic Indian playback singer celebrated for unforgettable 2000s Bollywood rock and love songs.',
-    image_url: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=600&q=80',
-    verified: true,
-    monthly_listeners: 19800000,
-    language: 'Hindi',
-  },
+  { id: 'art-1', name: 'Arijit Singh', bio: 'The undisputed voice of soulful Bollywood romantic anthems.', image_url: 'https://c.saavncdn.com/430/Aashiqui-2-Hindi-2013-500x500.jpg', verified: true, monthly_listeners: 45000000, language: 'Hindi' },
+  { id: 'art-2', name: 'Sidhu Moose Wala', bio: 'Iconic Punjabi trailblazer who redefined global Punjabi hip-hop.', image_url: 'https://c.saavncdn.com/609/Moosetape-Punjabi-2021-20260626155141-500x500.webp', verified: true, monthly_listeners: 32000000, language: 'Punjabi' },
+  { id: 'art-3', name: 'Diljit Dosanjh', bio: 'Global Punjabi powerhouse, Coachella headliner and superstar.', image_url: 'https://c.saavncdn.com/209/MoonChild-Era-Punjabi-2021-20240715073449-500x500.webp', verified: true, monthly_listeners: 28000000, language: 'Punjabi' },
+  { id: 'art-4', name: 'Atif Aslam', bio: 'Legendary vocalist known for emotive Coke Studio sufi & Bollywood classics.', image_url: 'https://c.saavncdn.com/747/Jeena-Jeena-Bannet-Dosanjh-Remix-Hindi-2025-20250930144029-500x500.webp', verified: true, monthly_listeners: 27000000, language: 'Urdu' },
+  { id: 'art-5', name: 'Taylor Swift', bio: 'Global pop sensation and 14-time Grammy winning songwriter.', image_url: 'https://c.saavncdn.com/243/The-Cruelest-Summer-English-2023-20231109123211-500x500.webp', verified: true, monthly_listeners: 105000000, language: 'English' },
+  { id: 'art-6', name: 'Shreya Ghoshal', bio: 'India’s nightingale delivering melodious symphonies across languages.', image_url: 'https://c.saavncdn.com/808/Bajirao-Mastani-Hindi-2025-20260120201154-500x500.webp', verified: true, monthly_listeners: 31000000, language: 'Hindi' },
+  { id: 'art-7', name: 'The Weeknd', bio: 'Chart-conquering maestro blending dark R&B with 80s synthwave.', image_url: 'https://c.saavncdn.com/820/Blinding-Lights-English-2020-20200912094411-500x500.webp', verified: true, monthly_listeners: 98000000, language: 'English' },
+  { id: 'art-8', name: 'Pritam', bio: 'Architect of modern Bollywood soundscapes and timeless melodies.', image_url: 'https://c.saavncdn.com/871/Brahmastra-Original-Motion-Picture-Soundtrack-Hindi-2022-20221006155213-500x500.webp', verified: true, monthly_listeners: 38000000, language: 'Hindi' },
+  { id: 'art-9', name: 'AP Dhillon', bio: 'Modern Punjabi wave creator crafting chart-topping atmospheric hits.', image_url: 'https://c.saavncdn.com/890/Excuses-English-2021-20210930112054-500x500.webp', verified: true, monthly_listeners: 18000000, language: 'Punjabi' },
+  { id: 'art-10', name: 'KK (Krishnakumar Kunnath)', bio: 'The golden voice of iconic Bollywood rock and passionate romance.', image_url: 'https://c.saavncdn.com/801/Jannat-Hindi-2008-20190629135803-500x500.webp', verified: true, monthly_listeners: 21000000, language: 'Hindi' },
 ];
 
 export const ALBUMS: Album[] = [
-  {
-    id: 'alb-aashiqui',
-    title: 'Aashiqui 2 Soundtrack',
-    artist_id: 'art-arijit',
-    artist_name: 'Arijit Singh',
-    cover_url: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=600&q=80',
-    release_date: '2013-04-08',
-    type: 'album',
-    total_tracks: 4,
-    language: 'Hindi',
-  },
-  {
-    id: 'alb-cokestudio',
-    title: 'Coke Studio Season 9 Specials',
-    artist_id: 'art-rahat',
-    artist_name: 'Rahat Fateh Ali Khan & Momina',
-    cover_url: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80',
-    release_date: '2016-08-19',
-    type: 'album',
-    total_tracks: 3,
-    language: 'Urdu',
-  },
-  {
-    id: 'alb-punjabipop',
-    title: 'Punjabi Desi Vibrations',
-    artist_id: 'art-diljit',
-    artist_name: 'Diljit Dosanjh & Sona',
-    cover_url: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&w=600&q=80',
-    release_date: '2023-01-15',
-    type: 'album',
-    total_tracks: 3,
-    language: 'Punjabi',
-  },
-  {
-    id: 'alb-bengali',
-    title: 'Sonar Bangla Classics',
-    artist_id: 'art-hemanta',
-    artist_name: 'Hemanta Mukherjee',
-    cover_url: 'https://images.unsplash.com/photo-1487180144351-b8472da7d491?auto=format&fit=crop&w=600&q=80',
-    release_date: '2021-05-09',
-    type: 'album',
-    total_tracks: 2,
-    language: 'Bengali',
-  },
+  { id: 'alb-1', title: 'Brahmastra', artist_id: 'art-1', artist_name: 'Pritam & Arijit Singh', cover_url: 'https://c.saavncdn.com/871/Brahmastra-Original-Motion-Picture-Soundtrack-Hindi-2022-20221006155213-500x500.webp', release_date: '2022-09-09', type: 'album', total_tracks: 6, language: 'Hindi' },
+  { id: 'alb-2', title: 'Moosetape', artist_id: 'art-2', artist_name: 'Sidhu Moose Wala', cover_url: 'https://c.saavncdn.com/609/Moosetape-Punjabi-2021-20260626155141-500x500.webp', release_date: '2021-05-15', type: 'album', total_tracks: 32, language: 'Punjabi' },
+  { id: 'alb-3', title: 'MoonChild Era', artist_id: 'art-3', artist_name: 'Diljit Dosanjh', cover_url: 'https://c.saavncdn.com/209/MoonChild-Era-Punjabi-2021-20240715073449-500x500.webp', release_date: '2021-08-22', type: 'album', total_tracks: 9, language: 'Punjabi' },
+  { id: 'alb-4', title: 'Aashiqui 2', artist_id: 'art-1', artist_name: 'Arijit Singh & Mithoon', cover_url: 'https://c.saavncdn.com/430/Aashiqui-2-Hindi-2013-500x500.jpg', release_date: '2013-04-26', type: 'album', total_tracks: 11, language: 'Hindi' },
+  { id: 'alb-5', title: 'Bajirao Mastani', artist_id: 'art-6', artist_name: 'Sanjay Leela Bhansali & Shreya Ghoshal', cover_url: 'https://c.saavncdn.com/808/Bajirao-Mastani-Hindi-2025-20260120201154-500x500.webp', release_date: '2015-12-18', type: 'album', total_tracks: 10, language: 'Hindi' },
+  { id: 'alb-6', title: 'Yeh Jawaani Hai Deewani', artist_id: 'art-8', artist_name: 'Pritam', cover_url: 'https://c.saavncdn.com/440/Yeh-Jawaani-Hai-Deewani-2013-500x500.jpg', release_date: '2013-05-31', type: 'album', total_tracks: 10, language: 'Hindi' },
+  { id: 'alb-7', title: 'Tamasha', artist_id: 'art-1', artist_name: 'A.R. Rahman & Arijit Singh', cover_url: 'https://c.saavncdn.com/994/Tamasha-Hindi-2015-500x500.jpg', release_date: '2015-11-27', type: 'album', total_tracks: 9, language: 'Hindi' },
+  { id: 'alb-8', title: 'After Hours', artist_id: 'art-7', artist_name: 'The Weeknd', cover_url: 'https://c.saavncdn.com/820/Blinding-Lights-English-2020-20200912094411-500x500.webp', release_date: '2020-03-20', type: 'album', total_tracks: 14, language: 'English' },
 ];
 
 export const SONGS: Song[] = [
-  // 1. HINDI / BOLLYWOOD
+  // 1. Kesariya (Full 268s)
   {
-    id: 'song-tum-hi-ho',
+    id: 's-1',
+    title: 'Kesariya',
+    artist_id: 'art-1',
+    artist_name: 'Pritam, Arijit Singh, Amitabh Bhattacharya',
+    album_id: 'alb-1',
+    album_title: 'Brahmastra',
+    genre_id: 'g-1',
+    genre_name: 'Bollywood Romance',
+    language: 'Hindi',
+    duration_seconds: 268,
+    audio_url: 'https://aac.saavncdn.com/871/c2febd353f3a076a406fa37510f31f9f_160.mp4',
+    cover_url: 'https://c.saavncdn.com/871/Brahmastra-Original-Motion-Picture-Soundtrack-Hindi-2022-20221006155213-500x500.webp',
+    lyrics: `Mujhko itna bataye koi\nKaise tujhse dil na lagaye koi\nRabba ne tujhko banane mein\nKardi hai husn ki khaali tijoriyan\n\nKajal ki siyahi se likhi\nHai tune jaane kitno ki love storiyan\nKesariya tera ishq hai piya\nRang jaaun jo main haath lagaun\nDin beete saara teri fikr mein\nRain saari teri khair manaun`,
+    plays_count: 245000000,
+    likes_count: 298000,
+    is_explicit: false,
+  },
+  // 2. 295 (Full 270s)
+  {
+    id: 's-2',
+    title: '295',
+    artist_id: 'art-2',
+    artist_name: 'Sidhu Moose Wala',
+    album_id: 'alb-2',
+    album_title: 'Moosetape',
+    genre_id: 'g-3',
+    genre_name: 'Punjabi Desi Heat',
+    language: 'Punjabi',
+    duration_seconds: 270,
+    audio_url: 'https://aac.saavncdn.com/609/852628435c98083dfe217c1cfa731bb5_160.mp4',
+    cover_url: 'https://c.saavncdn.com/609/Moosetape-Punjabi-2021-20260626155141-500x500.webp',
+    lyrics: `Dass kehra ethe bhala chahunda tera\nHar koi ethe vekhe faida apna\n\nKade judde kade toote vishwaas tera\nKitte 295 je kare koi baat\nAjj kal loki sab matlabi ne yaara\nSidhu Moose Wala sada dil te raaj kare`,
+    plays_count: 310000000,
+    likes_count: 512000,
+    is_explicit: false,
+  },
+  // 3. Tum Hi Ho (Full 262s)
+  {
+    id: 's-3',
     title: 'Tum Hi Ho',
-    artist_id: 'art-arijit',
-    artist_name: 'Arijit Singh',
-    album_id: 'alb-aashiqui',
-    album_title: 'Aashiqui 2 Soundtrack',
-    genre_id: 'g-hindi',
+    artist_id: 'art-1',
+    artist_name: 'Mithoon, Arijit Singh',
+    album_id: 'alb-4',
+    album_title: 'Aashiqui 2',
+    genre_id: 'g-1',
     genre_name: 'Bollywood Romance',
     language: 'Hindi',
     duration_seconds: 262,
-    audio_url: 'https://archive.org/download/afreen-afreen-coke-studio-season-9/Tum%20Hi%20Ho%20(From%20_Aashiqui%202).mp3',
-    cover_url: 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?auto=format&fit=crop&w=600&q=80',
-    lyrics: `Hum tere bin ab reh nahi sakte
-Tere bina kya wajood mera
-Tujhse juda agar ho jaayenge
-Toh khud se hi ho jaayenge judaa
-
-Kyunki tum hi ho, ab tum hi ho
-Zindagi ab tum hi ho
-Chain bhi, mera dard bhi
-Meri aashiqui ab tum hi ho
-
-Tera mera rishta hai kaisa
-Ik pal door gawaara nahi
-Tere liye har roz hai jeete
-Tujhko diya mera waqt sabhi`,
-    plays_count: 8520000,
-    likes_count: 940000,
+    audio_url: 'https://aac.saavncdn.com/430/5c5ea5cc00e3bff45616013226f376fe_160.mp4',
+    cover_url: 'https://c.saavncdn.com/430/Aashiqui-2-Hindi-2013-500x500.jpg',
+    lyrics: `Hum tere bin ab reh nahi sakte\nTere bina kya wajood mera\nTujhse juda gar ho jaayenge\nToh khud se hi ho jaayenge judaa\n\nKyunki tum hi ho, ab tum hi ho\nZindagi ab tum hi ho\nChain bhi, mera dard bhi\nMeri aashiqui ab tum hi ho`,
+    plays_count: 380000000,
+    likes_count: 420000,
     is_explicit: false,
   },
+  // 4. Lover (Full 190s)
   {
-    id: 'song-agar-tum-saath-ho',
-    title: 'Agar Tum Saath Ho',
-    artist_id: 'art-arijit',
-    artist_name: 'Arijit Singh & Alka Yagnik',
-    album_id: 'alb-aashiqui',
-    album_title: 'Tamasha',
-    genre_id: 'g-hindi',
-    genre_name: 'Bollywood Romance',
-    language: 'Hindi',
-    duration_seconds: 341,
-    audio_url: 'https://archive.org/download/afreen-afreen-coke-studio-season-9/Agar%20Tum%20Saath%20Ho%20(From%20_Tamasha_).mp3',
-    cover_url: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=600&q=80',
-    lyrics: `Pal bhar thehar jaao, dil ye sambhal jaaye
-Kaise tumhe roka karun
-Meri taraf aata har gham phisal jaaye
-Aankhon mein tum ko bharun
-
-Bin bole baatein tumse karun
-Agar tum saath ho
-Dil ye sambhal jaaye
-Agar tum saath ho`,
-    plays_count: 9140000,
-    likes_count: 1020000,
-    is_explicit: false,
-  },
-  {
-    id: 'song-kabira',
-    title: 'Kabira',
-    artist_id: 'art-arijit',
-    artist_name: 'Arijit Singh & Tochi Raina',
-    album_id: 'alb-aashiqui',
-    album_title: 'Yeh Jawaani Hai Deewani',
-    genre_id: 'g-hindi',
-    genre_name: 'Bollywood Romance',
-    language: 'Hindi',
-    duration_seconds: 223,
-    audio_url: 'https://archive.org/download/afreen-afreen-coke-studio-season-9/Kabira.mp3',
-    cover_url: 'https://images.unsplash.com/photo-1465847899084-d164df4dedc6?auto=format&fit=crop&w=600&q=80',
-    lyrics: `Kaisi teri khudgarzi
-Na dhoop chune na chhaanv
-Kaisi teri khudgarzi
-Kisi thor tike na paanv
-
-Ban liya apna paighambar
-Tar liya tu saat samandar
-Phir bhi sookha mann ke andar
-Kyun reh gaya
-
-Re Kabira maan jaa
-Re Faqeera yun na jaa
-Aaja tujhko pukaare teri parchhaaiyan`,
-    plays_count: 7300000,
-    likes_count: 810000,
-    is_explicit: false,
-  },
-  {
-    id: 'song-pee-loon',
-    title: 'Pee Loon',
-    artist_id: 'art-kk',
-    artist_name: 'Mohit Chauhan',
-    album_id: 'alb-aashiqui',
-    album_title: 'Once Upon A Time In Mumbaai',
-    genre_id: 'g-hindi',
-    genre_name: 'Bollywood Romance',
-    language: 'Hindi',
-    duration_seconds: 285,
-    audio_url: 'https://archive.org/download/afreen-afreen-coke-studio-season-9/Pee%20Loon.mp3',
-    cover_url: 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?auto=format&fit=crop&w=600&q=80',
-    lyrics: `Pee loon tere neele neele naino se shabnam
-Pee loon tere geele geele hothon ki sargam
-Pee loon hai peene ka mausam
-
-Tere sang ishq taari hai
-Tere sang ik khumaari hai
-Tere sang chain bhi mujhko
-Tere sang bekaraari hai`,
-    plays_count: 5900000,
-    likes_count: 670000,
-    is_explicit: false,
-  },
-  {
-    id: 'song-zara-sa',
-    title: 'Zara Sa',
-    artist_id: 'art-kk',
-    artist_name: 'KK (Krishnakumar Kunnath)',
-    album_id: 'alb-aashiqui',
-    album_title: 'Jannat',
-    genre_id: 'g-hindi',
-    genre_name: 'Bollywood Romance',
-    language: 'Hindi',
-    duration_seconds: 303,
-    audio_url: 'https://archive.org/download/afreen-afreen-coke-studio-season-9/Zara%20Sa.mp3',
-    cover_url: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=600&q=80',
-    lyrics: `Zara sa jhoom loon main
-Arre na re na re na
-Zara sa dil mein de jagah tu
-Zara sa apna le bana
-
-Keh bhi de keh bhi de dil mein tere jo hai chhipa
-Khamakha kyu faasla
-Zara sa dil mein de jagah tu
-Zara sa apna le bana`,
-    plays_count: 6420000,
-    likes_count: 730000,
-    is_explicit: false,
-  },
-  {
-    id: 'song-jeena-jeena',
-    title: 'Jeena Jeena',
-    artist_id: 'art-atif',
-    artist_name: 'Atif Aslam',
-    album_id: 'alb-aashiqui',
-    album_title: 'Badlapur',
-    genre_id: 'g-hindi',
-    genre_name: 'Bollywood Romance',
-    language: 'Hindi',
-    duration_seconds: 229,
-    audio_url: 'https://archive.org/download/afreen-afreen-coke-studio-season-9/Jeena%20Jeena%20(From%20_Badlapur_).mp3',
-    cover_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80',
-    lyrics: `Dehleez pe mere dil ki
-Jo rakhe hain tune kadam
-Tere naam pe meri zindagi
-Likh di mere humdum
-
-Haan seekha maine jeena jeena kaise jeena
-Haan seekha maine jeena mere humdum
-Na seekha kabhi jeena jeena kaise jeena
-Na seekha jeena tere bina humdum`,
-    plays_count: 6100000,
-    likes_count: 780000,
-    is_explicit: false,
-  },
-
-  // 2. URDU / COKE STUDIO
-  {
-    id: 'song-afreen-afreen',
-    title: 'Afreen Afreen',
-    artist_id: 'art-rahat',
-    artist_name: 'Rahat Fateh Ali Khan & Momina Mustehsan',
-    album_id: 'alb-cokestudio',
-    album_title: 'Coke Studio Season 9',
-    genre_id: 'g-urdu',
-    genre_name: 'Coke Studio & Sufi',
-    language: 'Urdu',
-    duration_seconds: 400,
-    audio_url: 'https://archive.org/download/afreen-afreen-coke-studio-season-9/Afreen%20Afreen%20(Coke%20Studio%20Season%209).mp3',
-    cover_url: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80',
-    lyrics: `Aisa dekha nahi khoobsurat koi
-Jism jaise ajanta ki murat koi
-Jism jaise nigaahon pe jaadu koi
-Jism naghma koi jism khushbu koi
-
-Husn-e-jaana ki tareef mumkin nahi
-Afreen afreen, afreen afreen
-Tu bhi dekhe agar to kahe hum-nasheen
-Afreen afreen, afreen afreen`,
-    plays_count: 14200000,
-    likes_count: 1850000,
-    is_explicit: false,
-  },
-  {
-    id: 'song-tajdar-e-haram',
-    title: 'Tajdar-e-Haram',
-    artist_id: 'art-atif',
-    artist_name: 'Atif Aslam',
-    album_id: 'alb-cokestudio',
-    album_title: 'Coke Studio Season 8',
-    genre_id: 'g-urdu',
-    genre_name: 'Coke Studio & Sufi',
-    language: 'Urdu',
-    duration_seconds: 615,
-    audio_url: 'https://archive.org/download/AtifAslamTajdarEHaramCokeStudioSeason8Episode1_201806/Atif%20Aslam%20Tajdar-e-Haram%20Coke%20Studio%20Season%208%20Episode%201.mp3',
-    cover_url: 'https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?auto=format&fit=crop&w=600&q=80',
-    lyrics: `Kismat mein meri chain se jeena likh de
-Doobe na kabhi mera safeena likh de
-Jannat bhi gawaara hai magar mere liye
-Ae kaatib-e-taqdeer madina likh de
-
-Tajdar-e-haram, ho nigaah-e-karam
-Hum ghareebon ke sar par bhi chaaon rahe
-Tajdar-e-haram, ho nigaah-e-karam`,
-    plays_count: 18900000,
-    likes_count: 2300000,
-    is_explicit: false,
-  },
-
-  // 3. PUNJABI HITS
-  {
-    id: 'song-enna-sona',
-    title: 'Enna Sona',
-    artist_id: 'art-arijit',
-    artist_name: 'Arijit Singh & A.R. Rahman',
-    album_id: 'alb-punjabipop',
-    album_title: 'OK Jaanu',
-    genre_id: 'g-punjabi',
-    genre_name: 'Punjabi Hits',
+    id: 's-4',
+    title: 'Lover',
+    artist_id: 'art-3',
+    artist_name: 'Diljit Dosanjh, Intense, Raj Ranjodh',
+    album_id: 'alb-3',
+    album_title: 'MoonChild Era',
+    genre_id: 'g-3',
+    genre_name: 'Punjabi Desi Heat',
     language: 'Punjabi',
-    duration_seconds: 213,
-    audio_url: 'https://archive.org/download/afreen-afreen-coke-studio-season-9/Enna%20Sona.mp3',
-    cover_url: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&w=600&q=80',
-    lyrics: `Enna sona kyun Rabb ne banaya
-Aavan jaavan te main yaara nu manavan
-Enna sona kyun Rabb ne banaya
-
-Kol hove te sekh lagda ae
-Door jaave te dil jalda ae
-Kedi agg naal Rabb ne banaya
-Rabb ne banaya, Rabb ne banaya`,
-    plays_count: 7800000,
-    likes_count: 890000,
+    duration_seconds: 190,
+    audio_url: 'https://aac.saavncdn.com/209/88cd9a1cc0af8768d67272876bb09851_160.mp4',
+    cover_url: 'https://c.saavncdn.com/209/MoonChild-Era-Punjabi-2021-20240715073449-500x500.webp',
+    lyrics: `Tera ni tera lover, lover, lover ni\nJind jaan vi tere utto varan ni\nTainu karda main pyaar behisaab\nDiljit Dosanjh beats rollin'`,
+    plays_count: 195000000,
+    likes_count: 275000,
     is_explicit: false,
   },
+  // 5. Excuses (Full 177s)
   {
-    id: 'song-ambarsariya',
-    title: 'Ambarsariya',
-    artist_id: 'art-diljit',
-    artist_name: 'Sona Mohapatra',
-    album_id: 'alb-punjabipop',
-    album_title: 'Fukrey',
-    genre_id: 'g-punjabi',
-    genre_name: 'Punjabi Hits',
+    id: 's-5',
+    title: 'Excuses',
+    artist_id: 'art-9',
+    artist_name: 'AP Dhillon, Gurinder Gill, Intense',
+    genre_id: 'g-3',
+    genre_name: 'Punjabi Desi Heat',
     language: 'Punjabi',
-    duration_seconds: 248,
-    audio_url: 'https://archive.org/download/afreen-afreen-coke-studio-season-9/Ambarsariya.mp3',
-    cover_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80',
-    lyrics: `Ambarsariya mundeya ve kacchiyaan kaliyaan na tod
-Teri ma ne boleya mujhe teekha teekha bol
-Ambarsariya mundeya ve kacchiyaan kaliyaan na tod
-
-Gori gori baahon mein har dam
-Chudiyaan khankaati hoon
-Tere peeche peeche main
-Duniya bhulaati hoon`,
-    plays_count: 5120000,
-    likes_count: 590000,
+    duration_seconds: 177,
+    audio_url: 'https://aac.saavncdn.com/890/a18aabc4681dc6c334d5d29b67e84a0f_160.mp4',
+    cover_url: 'https://c.saavncdn.com/890/Excuses-English-2021-20210930112054-500x500.webp',
+    lyrics: `Kehndi hundi si chan tak raah bana de\nTaare ne pasand mainu hethan saare laade\nOhna taareyan de vich jad mainu vekhegi\nYaad karu tenu taan chete aawanga`,
+    plays_count: 230000000,
+    likes_count: 380000,
     is_explicit: false,
   },
+  // 6. Deewani Mastani (Full 339s)
   {
-    id: 'song-soch-na-sake',
-    title: 'Soch Na Sake',
-    artist_id: 'art-arijit',
-    artist_name: 'Arijit Singh & Tulsi Kumar',
-    album_id: 'alb-punjabipop',
-    album_title: 'Airlift',
-    genre_id: 'g-punjabi',
-    genre_name: 'Punjabi Hits',
-    language: 'Punjabi',
-    duration_seconds: 281,
-    audio_url: 'https://archive.org/download/afreen-afreen-coke-studio-season-9/Soch%20Na%20Sake%20(From%20_Airlift).mp3',
-    cover_url: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=600&q=80',
-    lyrics: `Tenu itna main pyaar karaan
-Ek pal vich sau baar karaan
-Tu jaave je mainu chhad ke
-Maut da intezaar karaan
-
-Ke tere liye duniya chhod di hai
-Tujhpe hi saans aake rukey
-Main tujhko kitna chahta hoon
-Ye tu kabhi soch na sake`,
-    plays_count: 8900000,
-    likes_count: 980000,
-    is_explicit: false,
-  },
-
-  // 4. BENGALI CLASSICS
-  {
-    id: 'song-aguner-poroshmoni',
-    title: 'Aguner Poroshmoni',
-    artist_id: 'art-hemanta',
-    artist_name: 'Rabindranath Tagore & Classical Ensemble',
-    album_id: 'alb-bengali',
-    album_title: 'Sonar Bangla Classics',
-    genre_id: 'g-bengali',
-    genre_name: 'Bengali Melody',
-    language: 'Bengali',
-    duration_seconds: 245,
-    audio_url: 'https://archive.org/download/ClassicSongVolume1/Aguner%20Poroshmoni.mp3',
-    cover_url: 'https://images.unsplash.com/photo-1487180144351-b8472da7d491?auto=format&fit=crop&w=600&q=80',
-    lyrics: `Aguner poroshmoni chhowao praane
-E jibon punyo koro dahon-daane
-Aguner poroshmoni chhowao praane
-
-Aamar e deho-khani tule dhoro
-Tomar oi debaloyer prodip koro
-Nishi-din alok-shikha joluk gaane
-Aguner poroshmoni chhowao praane`,
-    plays_count: 2450000,
-    likes_count: 310000,
-    is_explicit: false,
-  },
-  {
-    id: 'song-aamar-e-poth',
-    title: 'Aamar E Poth Tomar Pather',
-    artist_id: 'art-hemanta',
-    artist_name: 'Hemanta Mukherjee',
-    album_id: 'alb-bengali',
-    album_title: 'Sonar Bangla Classics',
-    genre_id: 'g-bengali',
-    genre_name: 'Bengali Melody',
-    language: 'Bengali',
-    duration_seconds: 215,
-    audio_url: 'https://archive.org/download/ClassicSongVolume1/Aamar%20E%20Poth%20Tomar%20Pather.mp3',
-    cover_url: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80',
-    lyrics: `Aamar e poth tomar pather theke
-Onek dure gechhe beke
-Aamar e ghor aakashe megher moton
-Ghire achhe tomay eke eke
-
-Tomar jani chiro-chhena shure
-Kono gaan aami baje na bajiye
-Aamar e buke sudhu tomar smriti
-Robi-chander aaloy saajiye`,
-    plays_count: 1820000,
+    id: 's-6',
+    title: 'Deewani Mastani',
+    artist_id: 'art-6',
+    artist_name: 'Shreya Ghoshal, Sanjay Leela Bhansali',
+    album_id: 'alb-5',
+    album_title: 'Bajirao Mastani',
+    genre_id: 'g-1',
+    genre_name: 'Bollywood Romance',
+    language: 'Hindi',
+    duration_seconds: 339,
+    audio_url: 'https://aac.saavncdn.com/808/08d91b5009b5e221ea5838d2acb4b690_160.mp4',
+    cover_url: 'https://c.saavncdn.com/808/Bajirao-Mastani-Hindi-2025-20260120201154-500x500.webp',
+    lyrics: `Nazar jo teri laagi main deewani ho gayi\nDeewani haan deewani ho gayi\nMashoor mere ishq ki kahani ho gayi\nDeewani haan deewani ho gayi`,
+    plays_count: 175000000,
     likes_count: 240000,
     is_explicit: false,
   },
-
-  // 5. ENGLISH / HOLLYWOOD & GLOBAL SYNTH
+  // 7. Agar Tum Saath Ho (Full 341s)
   {
-    id: 'song-cybernetic-skyline',
-    title: 'Cybernetic Skyline (After Hours)',
-    artist_id: 'art-arijit',
-    artist_name: 'The Weeknd Vibe (Global Synth)',
-    album_id: 'alb-aashiqui',
-    album_title: 'Midnight Odyssey',
-    genre_id: 'g-pop',
-    genre_name: 'Hollywood & Global Pop',
-    language: 'English',
-    duration_seconds: 372,
-    audio_url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-    cover_url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80',
-    lyrics: `Cruising through the neon haze
-Electric shadows in purple glaze
-Speeding through the grid tonight
-Guided by the violet light
-
-I can't feel my heartbeat fading
-In the dark the bass is breaking
-GAAN plays the pulse of tomorrow
-Transcending digital sorrow`,
-    plays_count: 6700000,
-    likes_count: 820000,
+    id: 's-7',
+    title: 'Agar Tum Saath Ho',
+    artist_id: 'art-1',
+    artist_name: 'Alka Yagnik, Arijit Singh',
+    album_id: 'alb-7',
+    album_title: 'Tamasha',
+    genre_id: 'g-1',
+    genre_name: 'Bollywood Romance',
+    language: 'Hindi',
+    duration_seconds: 341,
+    audio_url: 'https://aac.saavncdn.com/994/2e6b47719cea3e7c9f971a3f1ddc9b0a_160.mp4',
+    cover_url: 'https://c.saavncdn.com/994/Tamasha-Hindi-2015-500x500.jpg',
+    lyrics: `Pal bhar thehar jaao, dil ye sambhal jaaye\nKaise tumhe roka karun\nMeri taraf aata har gham phisal jaaye\nAgar tum saath ho\n\nDil ye sambhal jaaye\nAgar tum saath ho`,
+    plays_count: 360000000,
+    likes_count: 480000,
     is_explicit: false,
   },
+  // 8. Cruel Summer (Full 178s)
   {
-    id: 'song-neon-highway',
-    title: 'Neon Highway 86 (Synth Retro)',
-    artist_id: 'art-arijit',
-    artist_name: 'Dua Lipa & Retro Pop',
-    album_id: 'alb-aashiqui',
-    album_title: 'Midnight Odyssey',
-    genre_id: 'g-pop',
-    genre_name: 'Hollywood & Global Pop',
+    id: 's-8',
+    title: 'Cruel Summer',
+    artist_id: 'art-5',
+    artist_name: 'Taylor Swift, Jack Antonoff, St. Vincent',
+    genre_id: 'g-5',
+    genre_name: 'Global Pop & Synth',
     language: 'English',
-    duration_seconds: 423,
-    audio_url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
-    cover_url: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&w=600&q=80',
-    lyrics: `Midnight highway stretches on
-Chasing the horizon until the dawn
-Synthetic resonance fills the air
-Drifting freely without a care`,
-    plays_count: 4500000,
-    likes_count: 520000,
+    duration_seconds: 178,
+    audio_url: 'https://aac.saavncdn.com/243/cf6b522de1390996fdbe109298873c72_160.mp4',
+    cover_url: 'https://c.saavncdn.com/243/The-Cruelest-Summer-English-2023-20231109123211-500x500.webp',
+    lyrics: `Fever dream high in the quiet of the night\nYou know that I caught it\nBad, bad boy, shiny toy with a price\nYou know that I bought it\nAnd it's new, the shape of your body\nIt's blue, the feeling I've got\nAnd it's ooh, whoa, oh\nIt's a cruel summer`,
+    plays_count: 420000000,
+    likes_count: 610000,
+    is_explicit: false,
+  },
+  // 9. Afreen Afreen (Full 265s)
+  {
+    id: 's-9',
+    title: 'Afreen Afreen (Coke Studio)',
+    artist_id: 'art-4',
+    artist_name: 'Rahat Fateh Ali Khan & Momina Mustehsan',
+    genre_id: 'g-2',
+    genre_name: 'Coke Studio & Sufi',
+    language: 'Urdu',
+    duration_seconds: 265,
+    audio_url: 'https://aac.saavncdn.com/728/be3245a8b4bdcfca3c2c9ce62e81a8f7_160.mp4',
+    cover_url: 'https://c.saavncdn.com/728/Afreen-Afreen-Urdu-2022-20220802031813-500x500.webp',
+    lyrics: `Husn-e-jaana ki tareef mumkin nahi\nAfreen afreen, afreen afreen\nTu bhi dekhe agar toh kahe hamsheen\nAfreen afreen, afreen afreen\n\nAisa dekha nahi khoobsurat koi\nJism jaise ajanta ki murat koi\nJism jaise nigahon pe jaadu koi\nJism naghma koi, jism khushbu koi`,
+    plays_count: 280000000,
+    likes_count: 360000,
+    is_explicit: false,
+  },
+  // 10. Tajdar-E-Haram (Full 291s)
+  {
+    id: 's-10',
+    title: 'Tajdar-E-Haram',
+    artist_id: 'art-4',
+    artist_name: 'Atif Aslam, Shiraz Uppal',
+    genre_id: 'g-2',
+    genre_name: 'Coke Studio & Sufi',
+    language: 'Urdu',
+    duration_seconds: 291,
+    audio_url: 'https://aac.saavncdn.com/333/0d7a19ed14693db414d2014668045226_160.mp4',
+    cover_url: 'https://c.saavncdn.com/333/Satyameva-Jayate-Hindi-2018-20180801-500x500.jpg',
+    lyrics: `Kismat mein meri chain se jeena likh de\nDoobe na kabhi mera safeena likh de\nJannat bhi gawaara hai magar mere khuda\nPehle toh madine ka safeena likh de\n\nTajdar-e-haram, ho nigaah-e-karam`,
+    plays_count: 220000000,
+    likes_count: 310000,
+    is_explicit: false,
+  },
+  // 11. Kabira (Full 224s)
+  {
+    id: 's-11',
+    title: 'Kabira',
+    artist_id: 'art-8',
+    artist_name: 'Pritam, Tochi Raina, Rekha Bhardwaj',
+    album_id: 'alb-6',
+    album_title: 'Yeh Jawaani Hai Deewani',
+    genre_id: 'g-1',
+    genre_name: 'Bollywood Romance',
+    language: 'Hindi',
+    duration_seconds: 224,
+    audio_url: 'https://aac.saavncdn.com/440/664097ba2ddb94e9a8c9e9527b3010ec_160.mp4',
+    cover_url: 'https://c.saavncdn.com/440/Yeh-Jawaani-Hai-Deewani-2013-500x500.jpg',
+    lyrics: `Kaisi teri khudgarzi\nNa dhoop chune na chhaanv\nKaisi teri khudgarzi\nKisi thaur tike na paanv\n\nRe Kabira maan jaa\nRe Faqeera maan jaa`,
+    plays_count: 260000000,
+    likes_count: 290000,
+    is_explicit: false,
+  },
+  // 12. Pee Loon (Full 285s)
+  {
+    id: 's-12',
+    title: 'Pee Loon',
+    artist_id: 'art-8',
+    artist_name: 'Mohit Chauhan, Pritam',
+    genre_id: 'g-1',
+    genre_name: 'Bollywood Romance',
+    language: 'Hindi',
+    duration_seconds: 285,
+    audio_url: 'https://aac.saavncdn.com/106/c7c9cdfc2ea4dcd3388fe15e3eae06c2_160.mp4',
+    cover_url: 'https://c.saavncdn.com/106/Emraan-Hashmi-Hits-Hindi-2026-20260905191028-500x500.webp',
+    lyrics: `Pee loon tere neele neele naino se shabnam\nPee loon tere geele geele hothon ki sargam\nPee loon hai peene ka mausam\n\nTere sang ishq taari hai\nTere sang ik khumaari hai`,
+    plays_count: 190000000,
+    likes_count: 215000,
+    is_explicit: false,
+  },
+  // 13. Zara Sa (Full 302s)
+  {
+    id: 's-13',
+    title: 'Zara Sa',
+    artist_id: 'art-10',
+    artist_name: 'KK (Krishnakumar Kunnath), Pritam',
+    genre_id: 'g-1',
+    genre_name: 'Bollywood Romance',
+    language: 'Hindi',
+    duration_seconds: 302,
+    audio_url: 'https://aac.saavncdn.com/801/571617f7810fb699ed56bc8a7d9e40d9_160.mp4',
+    cover_url: 'https://c.saavncdn.com/801/Jannat-Hindi-2008-20190629135803-500x500.webp',
+    lyrics: `Zara sa jhoom loon main\nZara sa dil mein de jagah tu\nZara sa apna le bana\nZara sa khwaabon mein saja tu`,
+    plays_count: 210000000,
+    likes_count: 280000,
+    is_explicit: false,
+  },
+  // 14. Blinding Lights (Full 204s)
+  {
+    id: 's-14',
+    title: 'Blinding Lights',
+    artist_id: 'art-7',
+    artist_name: 'The Weeknd, Max Martin, Oscar Holter',
+    album_id: 'alb-8',
+    album_title: 'After Hours',
+    genre_id: 'g-5',
+    genre_name: 'Global Pop & Synth',
+    language: 'English',
+    duration_seconds: 204,
+    audio_url: 'https://aac.saavncdn.com/820/5ddb9a79a5218f85ca9bef170f3a461d_160.mp4',
+    cover_url: 'https://c.saavncdn.com/820/Blinding-Lights-English-2020-20200912094411-500x500.webp',
+    lyrics: `Yeah, I've been tryna call\nI've been on my own for long enough\nMaybe you can show me how to love, maybe\nI said, ooh, I'm blinded by the lights\nNo, I can't sleep until I feel your touch`,
+    plays_count: 520000000,
+    likes_count: 790000,
+    is_explicit: false,
+  },
+  // 15. Aguner Poroshmoni (Full 210s)
+  {
+    id: 's-15',
+    title: 'Aguner Poroshmoni',
+    artist_id: 'art-1',
+    artist_name: 'Rabindranath Tagore • Srikanto Acharya',
+    genre_id: 'g-4',
+    genre_name: 'Bengali Classics',
+    language: 'Bengali',
+    duration_seconds: 210,
+    audio_url: 'https://aac.saavncdn.com/358/a1e645607ba919864228c25368f5a545_160.mp4',
+    cover_url: 'https://c.saavncdn.com/358/Aguner-Poroshmoni-Bengali-2021-20211006110024-500x500.webp',
+    lyrics: `Aguner poroshmoni chhowao praane\nE jibon punyo koro dohon-daane\nAmar e deho-khani tule dhoro\nTumar oi debaloyer prodip koro`,
+    plays_count: 65000000,
+    likes_count: 98000,
     is_explicit: false,
   },
 ];

@@ -4,11 +4,13 @@ import '../theme/gaan_theme.dart';
 class GaanLogoMark extends StatelessWidget {
   final double size;
   final bool showText;
+  final VoidCallback? onTap;
 
   const GaanLogoMark({
     super.key,
     this.size = 48,
     this.showText = false,
+    this.onTap,
   });
 
   @override
@@ -17,37 +19,42 @@ class GaanLogoMark extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: const RadialGradient(
-          colors: [Color(0xFF25103F), Color(0xFF0F061A), Colors.black],
-        ),
+        borderRadius: BorderRadius.circular(size * 0.24),
         boxShadow: [
           BoxShadow(
-            color: GaanTheme.primaryPurple.withOpacity(0.35),
-            blurRadius: size * 0.35,
+            color: GaanTheme.primaryPurple.withOpacity(0.5),
+            blurRadius: size * 0.4,
             spreadRadius: 1,
           ),
+          BoxShadow(
+            color: GaanTheme.fuchsiaNeon.withOpacity(0.3),
+            blurRadius: size * 0.2,
+          ),
         ],
-        border: Border.all(
-          color: GaanTheme.primaryPurple.withOpacity(0.4),
-          width: 1.5,
-        ),
       ),
-      child: Center(
-        child: CustomPaint(
-          size: Size(size * 0.65, size * 0.65),
-          painter: _GaanLogoPainter(),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(size * 0.24),
+        child: Image.asset(
+          'assets/images/creative_max_logo.png',
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
         ),
       ),
     );
 
-    if (!showText) return logoWidget;
+    if (!showText) {
+      if (onTap != null) {
+        return GestureDetector(onTap: onTap, child: logoWidget);
+      }
+      return logoWidget;
+    }
 
-    return Row(
+    final content = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         logoWidget,
-        const SizedBox(width: 12),
+        const SizedBox(width: 10),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -59,29 +66,40 @@ class GaanLogoMark extends StatelessWidget {
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w900,
-                    fontSize: 22,
+                    fontSize: 20,
                     letterSpacing: 2.0,
                   ),
                 ),
                 const SizedBox(width: 6),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
-                    color: GaanTheme.primaryPurple.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(4),
-                    border: Border.all(
-                      color: GaanTheme.primaryPurple.withOpacity(0.4),
-                      width: 0.8,
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFF9333EA), Color(0xFFC026D3)],
                     ),
+                    borderRadius: BorderRadius.circular(6),
+                    boxShadow: [
+                      BoxShadow(
+                        color: GaanTheme.fuchsiaNeon.withOpacity(0.4),
+                        blurRadius: 6,
+                      ),
+                    ],
                   ),
-                  child: const Text(
-                    'PRO',
-                    style: TextStyle(
-                      color: GaanTheme.purpleLight,
-                      fontSize: 9,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 0.8,
-                    ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.bolt, color: Colors.white, size: 10),
+                      SizedBox(width: 2),
+                      Text(
+                        'UNLIMITED',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 8.5,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 0.8,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -90,7 +108,7 @@ class GaanLogoMark extends StatelessWidget {
               'TRUE AMOLED MUSIC',
               style: TextStyle(
                 color: GaanTheme.textMuted,
-                fontSize: 9,
+                fontSize: 8.5,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 1.2,
               ),
@@ -99,72 +117,14 @@ class GaanLogoMark extends StatelessWidget {
         ),
       ],
     );
+
+    if (onTap != null) {
+      return GestureDetector(
+        onTap: onTap,
+        behavior: HitTestBehavior.opaque,
+        child: content,
+      );
+    }
+    return content;
   }
-}
-
-class _GaanLogoPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final strokePaint = Paint()
-      ..shader = GaanTheme.primaryGradient.createShader(
-        Rect.fromLTWH(0, 0, size.width, size.height),
-      )
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = size.width * 0.12
-      ..strokeCap = StrokeCap.round;
-
-    final fillPaint = Paint()
-      ..shader = GaanTheme.primaryGradient.createShader(
-        Rect.fromLTWH(0, 0, size.width, size.height),
-      )
-      ..style = PaintingStyle.fill;
-
-    // Draw stylized 'G' arc
-    final rect = Rect.fromCircle(
-      center: Offset(size.width * 0.5, size.height * 0.5),
-      radius: size.width * 0.42,
-    );
-    canvas.drawArc(rect, 0.5, 5.0, false, strokePaint);
-
-    // Inner waveform bars
-    final barW = size.width * 0.08;
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromCenter(
-          center: Offset(size.width * 0.42, size.height * 0.5),
-          width: barW,
-          height: size.height * 0.35,
-        ),
-        const Radius.circular(2),
-      ),
-      fillPaint,
-    );
-
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromCenter(
-          center: Offset(size.width * 0.56, size.height * 0.46),
-          width: barW,
-          height: size.height * 0.5,
-        ),
-        const Radius.circular(2),
-      ),
-      fillPaint,
-    );
-
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromCenter(
-          center: Offset(size.width * 0.70, size.height * 0.52),
-          width: barW,
-          height: size.height * 0.3,
-        ),
-        const Radius.circular(2),
-      ),
-      fillPaint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

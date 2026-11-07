@@ -285,34 +285,63 @@ class _FullPlayerScreenState extends State<FullPlayerScreen> with SingleTickerPr
 
   Widget _buildArtworkView(Song song, bool isLiked, AudioPlayerService player) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Album Cover Artwork
+          // Album Cover Artwork with Gesture Swipe to Change Songs
           Expanded(
             child: Center(
               child: AspectRatio(
                 aspectRatio: 1.0,
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(24),
-                    boxShadow: [
-                      BoxShadow(
-                        color: GaanTheme.primaryPurple.withOpacity(0.35),
-                        blurRadius: 30,
-                        spreadRadius: 2,
-                      ),
-                    ],
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(24),
-                    child: Image.network(
-                      song.coverUrl,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Container(
-                        color: GaanTheme.charcoalCard,
-                        child: const Icon(Icons.music_note, size: 80, color: GaanTheme.primaryPurple),
+                child: GestureDetector(
+                  onHorizontalDragEnd: (details) {
+                    final vel = details.primaryVelocity ?? 0;
+                    if (vel < -150) {
+                      player.next();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          backgroundColor: GaanTheme.primaryPurple,
+                          content: Text('⏭ Playing Next Song'),
+                          duration: Duration(milliseconds: 600),
+                        ),
+                      );
+                    } else if (vel > 150) {
+                      player.previous();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          backgroundColor: GaanTheme.primaryPurple,
+                          content: Text('⏮ Playing Previous Song'),
+                          duration: Duration(milliseconds: 600),
+                        ),
+                      );
+                    }
+                  },
+                  onVerticalDragEnd: (details) {
+                    if ((details.primaryVelocity ?? 0) > 300) {
+                      Navigator.of(context).pop();
+                    }
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(24),
+                      boxShadow: [
+                        BoxShadow(
+                          color: GaanTheme.primaryPurple.withOpacity(0.35),
+                          blurRadius: 30,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(24),
+                      child: Image.network(
+                        song.coverUrl,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => Container(
+                          color: GaanTheme.charcoalCard,
+                          child: const Icon(Icons.music_note, size: 80, color: GaanTheme.primaryPurple),
+                        ),
                       ),
                     ),
                   ),
@@ -321,7 +350,28 @@ class _FullPlayerScreenState extends State<FullPlayerScreen> with SingleTickerPr
             ),
           ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: 10),
+
+          // Visual Swipe Guide
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.swipe_left_alt, color: GaanTheme.purpleLight, size: 14),
+              const SizedBox(width: 4),
+              Text(
+                'Swipe artwork to change song',
+                style: TextStyle(
+                  color: GaanTheme.textMuted.withOpacity(0.85),
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(width: 4),
+              const Icon(Icons.swipe_right_alt, color: GaanTheme.purpleLight, size: 14),
+            ],
+          ),
+
+          const SizedBox(height: 16),
 
           // Title, Artist, and Heart Like
           Row(

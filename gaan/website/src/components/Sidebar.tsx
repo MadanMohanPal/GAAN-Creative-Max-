@@ -19,18 +19,16 @@ export const Sidebar = () => {
     <aside className="w-64 bg-[#050508] border-r border-[#171722] flex flex-col h-screen select-none z-20 shrink-0">
       {/* Brand Header */}
       <div className="p-6 flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-violet-600 via-purple-500 to-fuchsia-500 p-0.5 flex items-center justify-center shadow-purple-glow">
-          <div className="w-full h-full bg-[#000000] rounded-[10px] flex items-center justify-center">
-            <span className="font-extrabold text-lg text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-fuchsia-400">G</span>
-          </div>
+        <div className="w-12 h-12 rounded-xl overflow-hidden shadow-lg shadow-purple-600/40 border border-purple-500/40 shrink-0">
+          <img src="/creative_max_logo.png" alt="Creative Max Logo" className="w-full h-full object-cover" />
         </div>
-          <div>
-            <div className="flex items-center gap-1.5">
-              <span className="font-black text-xl tracking-wider text-white">GAAN</span>
-              <span className="px-1.5 py-0.5 text-[9px] font-bold uppercase rounded bg-gradient-to-r from-purple-600 to-pink-600 text-white">CREATIVE MAX</span>
-            </div>
-            <span className="text-[10px] text-zinc-400 tracking-wide font-medium">By Creative Max Studio</span>
+        <div>
+          <div className="flex items-center gap-1.5">
+            <span className="font-black text-lg tracking-wider text-white">Creative Max</span>
+            <span className="px-1.5 py-0.5 text-[8.5px] font-extrabold uppercase rounded bg-gradient-to-r from-purple-600 via-fuchsia-600 to-pink-600 text-white shadow-sm">PRO</span>
           </div>
+          <span className="text-[10px] text-zinc-400 tracking-wide font-medium">MUSIC • MORE • FOREVER</span>
+        </div>
       </div>
 
       {/* Main Navigation */}

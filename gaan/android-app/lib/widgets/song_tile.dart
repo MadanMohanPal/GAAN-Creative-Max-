@@ -88,7 +88,7 @@ class SongTile extends StatelessWidget {
               ),
             ),
 
-            // Duration / Menu
+            // Duration
             Text(
               '${song.durationSeconds ~/ 60}:${(song.durationSeconds % 60).toString().padLeft(2, '0')}',
               style: const TextStyle(
@@ -97,13 +97,63 @@ class SongTile extends StatelessWidget {
                 fontFamily: 'monospace',
               ),
             ),
-            const SizedBox(width: 8),
-            IconButton(
-              icon: const Icon(Icons.more_vert, size: 18, color: GaanTheme.textMuted),
-              onPressed: () {
-                // Show song action sheet
-              },
-            ),
+            const SizedBox(width: 4),
+
+            // 1-Click Offline Download Button
+            if (player.isDownloading(song.id))
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: GaanTheme.fuchsiaNeon,
+                  ),
+                ),
+              )
+            else
+              IconButton(
+                icon: Icon(
+                  player.isDownloaded(song.id)
+                      ? Icons.check_circle
+                      : Icons.download_for_offline_outlined,
+                  size: 20,
+                  color: player.isDownloaded(song.id)
+                      ? GaanTheme.fuchsiaNeon
+                      : GaanTheme.textMuted,
+                ),
+                tooltip: player.isDownloaded(song.id) ? 'Downloaded Offline' : 'Download Song',
+                onPressed: () async {
+                  if (player.isDownloaded(song.id)) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        backgroundColor: GaanTheme.charcoalCard,
+                        content: Text('✓ "${song.title}" is saved for offline listening'),
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        backgroundColor: GaanTheme.primaryPurple,
+                        content: Text('Downloading "${song.title}"...'),
+                        duration: const Duration(seconds: 1),
+                      ),
+                    );
+                    final ok = await player.downloadSong(song);
+                    if (ok && context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: GaanTheme.purpleLight,
+                          content: Text('✓ "${song.title}" downloaded successfully!'),
+                          duration: const Duration(seconds: 2),
+                        ),
+                      );
+                    }
+                  }
+                },
+              ),
           ],
         ),
       ),

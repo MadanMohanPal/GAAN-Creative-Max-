@@ -9,8 +9,10 @@ import { FullPlayerModal } from "@/components/FullPlayerModal";
 export const metadata: Metadata = {
   title: "GAAN by Creative Max — Stream in True AMOLED",
   description: "High-resolution music streaming ecosystem engineered by Creative Max with true AMOLED dark UI and lossless audio.",
+  manifest: "/manifest.json",
   icons: {
-    icon: "/icon.svg",
+    icon: "/creative_max_logo.png",
+    apple: "/creative_max_logo.png",
   },
 };
 

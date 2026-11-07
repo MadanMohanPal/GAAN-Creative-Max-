@@ -1,9 +1,10 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import '../data/sample_catalogue.dart';
 import '../models/song.dart';
+import '../services/audio_player_service.dart';
+import '../services/music_search_service.dart';
 import '../theme/gaan_theme.dart';
 import '../widgets/song_tile.dart';
 
@@ -22,6 +23,8 @@ class _SearchScreenState extends State<SearchScreen> {
   bool _isLoading = false;
   Timer? _debounce;
   List<Song> _globalSongs = [];
+  List<Song> _relatedSongs = [];
+  final List<String> _recentSearches = [];
 
   final List<String> _trending = [
     'Kesariya',
@@ -48,60 +51,37 @@ class _SearchScreenState extends State<SearchScreen> {
     if (val.trim().isEmpty) {
       setState(() {
         _globalSongs = [];
+        _relatedSongs = [];
         _isLoading = false;
       });
       return;
     }
 
-    _debounce = Timer(const Duration(milliseconds: 400), () {
+    _debounce = Timer(const Duration(milliseconds: 350), () {
       _performSearch(val.trim());
     });
   }
 
   Future<void> _performSearch(String query) async {
     setState(() => _isLoading = true);
+    if (!_recentSearches.contains(query)) {
+      _recentSearches.insert(0, query);
+      if (_recentSearches.length > 8) _recentSearches.removeLast();
+    }
     try {
-      final uri = Uri.parse(
-          'https://itunes.apple.com/search?term=${Uri.encodeComponent(query)}&entity=song&limit=30');
-      final res = await http.get(uri);
-      if (res.statusCode == 200) {
-        final data = jsonDecode(res.body);
-        final List results = data['results'] ?? [];
-        final List<Song> parsed = results.map((item) {
-          final trackId = item['trackId']?.toString() ?? UniqueKey().toString();
-          final title = item['trackName'] ?? 'Unknown Song';
-          final artist = item['artistName'] ?? 'Unknown Artist';
-          final album = item['collectionName'] ?? item['trackName'] ?? 'Single';
-          final rawArt = item['artworkUrl100'] as String?;
-          final cover = rawArt != null
-              ? rawArt.replaceAll('100x100bb', '600x600bb')
-              : 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&q=80';
-          final audioUrl = item['previewUrl'] ?? '';
-          final durationSec = ((item['trackTimeMillis'] ?? 30000) / 1000).round();
-          final genre = item['primaryGenreName'] ?? 'Pop';
+      context.read<AudioPlayerService>().addSearchQuery(query);
+    } catch (_) {}
 
-          return Song(
-            id: 'global_$trackId',
-            title: title,
-            artistId: 'artist_$trackId',
-            artistName: artist,
-            albumTitle: album,
-            durationSeconds: durationSec,
-            audioUrl: audioUrl,
-            coverUrl: cover,
-            genreName: genre,
-            lyrics: 'Streaming $title by $artist\nHigh Fidelity Audio Fidelity on GAAN',
-          );
-        }).where((s) => s.audioUrl.isNotEmpty).toList();
+    try {
+      // Direct standalone in-app search & native DES decryption (no localhost dependency)
+      final result = await MusicSearchService.searchMusic(query);
 
-        if (mounted) {
-          setState(() {
-            _globalSongs = parsed;
-            _isLoading = false;
-          });
-        }
-      } else {
-        if (mounted) setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() {
+          _globalSongs = result.songs;
+          _relatedSongs = result.relatedSongs;
+          _isLoading = false;
+        });
       }
     } catch (e) {
       if (mounted) setState(() => _isLoading = false);
@@ -121,10 +101,12 @@ class _SearchScreenState extends State<SearchScreen> {
 
     // Combine local + global
     final seenTitles = localMatches.map((s) => s.title.toLowerCase()).toSet();
-    final combinedSongs = [
-      ...localMatches,
-      ..._globalSongs.where((s) => !seenTitles.contains(s.title.toLowerCase())),
-    ];
+    final combinedSongs = _globalSongs.isNotEmpty
+        ? _globalSongs
+        : [
+            ...localMatches,
+            ..._globalSongs.where((s) => !seenTitles.contains(s.title.toLowerCase())),
+          ];
 
     final filteredArtists = SampleCatalogue.artists.where((a) {
       return a.name.toLowerCase().contains(cleanQ) || a.bio.toLowerCase().contains(cleanQ);
@@ -149,7 +131,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   onChanged: _onSearchChanged,
                   style: const TextStyle(color: Colors.white, fontSize: 15),
                   decoration: InputDecoration(
-                    hintText: 'Search ANY song, artist or playlist...',
+                    hintText: 'Search ANY full-length song...',
                     hintStyle: const TextStyle(color: GaanTheme.textMuted, fontSize: 13),
                     prefixIcon: _isLoading
                         ? const Padding(
@@ -272,22 +254,21 @@ class _SearchScreenState extends State<SearchScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  'Songs (${combinedSongs.length})',
+                                  'Songs & Tracks',
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16,
                                   ),
                                 ),
-                                if (_globalSongs.isNotEmpty)
-                                  const Text(
-                                    '🌍 Worldwide Catalog',
-                                    style: TextStyle(
-                                      color: GaanTheme.violetAccent,
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                const Text(
+                                  '⭐ 100% Full Audio',
+                                  style: TextStyle(
+                                    color: GaanTheme.fuchsiaNeon,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
                                   ),
+                                ),
                               ],
                             ),
                           ),
@@ -297,12 +278,37 @@ class _SearchScreenState extends State<SearchScreen> {
                               )),
                         ],
 
+                        // Mood & Related Songs Suggestions
+                        if (_relatedSongs.isNotEmpty && (_activeFilter == 'All' || _activeFilter == 'Songs')) ...[
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                            child: Row(
+                              children: [
+                                const Icon(Icons.auto_awesome, color: GaanTheme.fuchsiaNeon, size: 16),
+                                const SizedBox(width: 6),
+                                Text(
+                                  'Suggested for this vibe ("$_query")',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          ..._relatedSongs.map((song) => SongTile(
+                                song: song,
+                                playlistContext: _relatedSongs,
+                              )),
+                        ],
+
                         if (_activeFilter == 'All' || _activeFilter == 'Artists') ...[
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                            child: Text(
-                              'Artists (${filteredArtists.length})',
-                              style: const TextStyle(
+                            child: const Text(
+                              'Artists',
+                              style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
@@ -327,27 +333,107 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.search, size: 64, color: GaanTheme.textMuted.withOpacity(0.5)),
-          const SizedBox(height: 12),
-          const Text(
-            'Search Any Song in the World',
-            style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+    return ListView(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+      children: [
+        if (_recentSearches.isNotEmpty) ...[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Row(
+                children: [
+                  Icon(Icons.history, color: GaanTheme.purpleLight, size: 18),
+                  SizedBox(width: 6),
+                  Text(
+                    'Recent Searches',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              GestureDetector(
+                onTap: () => setState(() => _recentSearches.clear()),
+                child: const Text(
+                  'Clear',
+                  style: TextStyle(color: GaanTheme.textMuted, fontSize: 12),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 6),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 32),
-            child: Text(
-              'Search Bollywood, Coke Studio, Punjabi, English Pop, or Bengali hits',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: GaanTheme.textMuted, fontSize: 12),
-            ),
+          const SizedBox(height: 10),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: _recentSearches.map((term) {
+              return ActionChip(
+                backgroundColor: GaanTheme.surfaceBlack,
+                side: const BorderSide(color: GaanTheme.borderCharcoal),
+                avatar: const Icon(Icons.arrow_outward, size: 14, color: GaanTheme.textMuted),
+                label: Text(term, style: const TextStyle(color: Colors.white, fontSize: 12)),
+                onPressed: () {
+                  _searchController.text = term;
+                  _onSearchChanged(term);
+                },
+              );
+            }).toList(),
           ),
+          const SizedBox(height: 28),
         ],
-      ),
+
+        // Suggestions based on mood & trending
+        const Row(
+          children: [
+            Icon(Icons.explore, color: GaanTheme.fuchsiaNeon, size: 18),
+            SizedBox(width: 6),
+            Text(
+              'Trending Searches',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: _trending.map((term) {
+            return ActionChip(
+              backgroundColor: const Color(0xFF1F132E),
+              side: const BorderSide(color: Color(0xFF3B1E54)),
+              label: Text(term, style: const TextStyle(color: GaanTheme.purpleLight, fontSize: 12)),
+              onPressed: () {
+                _searchController.text = term;
+                _onSearchChanged(term);
+              },
+            );
+          }).toList(),
+        ),
+
+        const SizedBox(height: 36),
+        Center(
+          child: Column(
+            children: [
+              Icon(Icons.search, size: 48, color: GaanTheme.textMuted.withOpacity(0.4)),
+              const SizedBox(height: 10),
+              const Text(
+                'Search Any Song Worldwide',
+                style: TextStyle(color: Colors.white70, fontSize: 14, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 4),
+              const Text(
+                'JioSaavn & Studio Decryption engine by Creative Max',
+                style: TextStyle(color: GaanTheme.textMuted, fontSize: 11),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

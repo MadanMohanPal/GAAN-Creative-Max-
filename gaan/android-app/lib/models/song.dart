@@ -14,6 +14,7 @@ class Song {
   final int playsCount;
   final int likesCount;
   final bool isExplicit;
+  final String? language;
 
   const Song({
     required this.id,
@@ -31,6 +32,7 @@ class Song {
     this.playsCount = 0,
     this.likesCount = 0,
     this.isExplicit = false,
+    this.language,
   });
 
   factory Song.fromJson(Map<String, dynamic> json) {
@@ -50,6 +52,7 @@ class Song {
       playsCount: (json['plays_count'] ?? json['playsCount'] ?? 0) as int,
       likesCount: (json['likes_count'] ?? json['likesCount'] ?? 0) as int,
       isExplicit: json['is_explicit'] as bool? ?? json['isExplicit'] as bool? ?? false,
+      language: json['language'] as String?,
     );
   }
 
@@ -70,6 +73,7 @@ class Song {
       'plays_count': playsCount,
       'likes_count': likesCount,
       'is_explicit': isExplicit,
+      'language': language,
     };
   }
 }

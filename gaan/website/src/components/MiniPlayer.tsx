@@ -15,6 +15,7 @@ import {
   Maximize2,
   Heart,
   ListMusic,
+  Download,
 } from 'lucide-react';
 
 const formatTime = (secs: number) => {
@@ -45,6 +46,7 @@ export const MiniPlayer = () => {
     cycleRepeat,
     setFullPlayerOpen,
     toggleLike,
+    downloadSong,
   } = usePlayer();
 
   if (!currentSong) return null;
@@ -106,6 +108,14 @@ export const MiniPlayer = () => {
           title={isLiked ? 'Remove from Liked' : 'Save to Liked'}
         >
           <Heart className={`w-4 h-4 ${isLiked ? 'fill-pink-500 text-pink-500' : ''}`} />
+        </button>
+
+        <button
+          onClick={() => downloadSong(currentSong)}
+          className="p-1.5 text-zinc-400 hover:text-purple-400 transition-colors shrink-0 ml-0.5"
+          title="1-Click Download MP3"
+        >
+          <Download className="w-4 h-4" />
         </button>
       </div>
 

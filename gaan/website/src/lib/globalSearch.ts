@@ -80,7 +80,7 @@ export async function searchGlobalMusic(query: string): Promise<GlobalSearchResu
         const rawCover = item.image || '';
         const cover = rawCover
           ? rawCover.replace('150x150', '500x500').replace('50x50', '500x500')
-          : 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&q=80';
+          : 'https://c.saavncdn.com/871/Brahmastra-Original-Motion-Picture-Soundtrack-Hindi-2022-20221006155213-500x500.webp';
 
         const langRaw = (item.language || 'hindi').toLowerCase();
         const detectedLang = langRaw.includes('punjabi')
@@ -137,34 +137,50 @@ export async function searchGlobalMusic(query: string): Promise<GlobalSearchResu
     console.warn('Saavn full search error, falling back:', err);
   }
 
-  // 2. Fallback to iTunes API if Saavn returned no results
+  // 2. Secondary fallback to JioSaavn autocomplete / song search if primary had 0 results
   if (songs.length === 0) {
     try {
-      const itunesRes = await fetch(
-        `https://itunes.apple.com/search?term=${encodeURIComponent(cleanQ)}&entity=song&limit=25`
-      );
-      if (itunesRes.ok) {
-        const data = await itunesRes.json();
-        const results = data.results || [];
-        for (const item of results) {
-          if (!item.previewUrl) continue;
+      const autoUrl = `https://www.jiosaavn.com/api.php?__call=autocomplete.get&query=${encodeURIComponent(
+        cleanQ
+      )}&_format=json&_marker=0&ctx=android`;
+      const autoRes = await fetch(autoUrl, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          Accept: 'application/json',
+        },
+      });
+      if (autoRes.ok) {
+        const autoData = await autoRes.json();
+        const autoSongs = autoData.songs?.data || [];
+        for (const item of autoSongs) {
+          if (!item.encrypted_media_url) continue;
+          const streamUrl = decryptSaavnMediaUrl(item.encrypted_media_url);
+          if (!streamUrl) continue;
+
+          const title = cleanHtml(item.title || item.song || 'GAAN Track');
+          const artist = cleanHtml(item.more_info?.primary_artists || item.description || 'Creative Max Artist');
+          const album = cleanHtml(item.more_info?.album || 'Single');
+          const durationSec = parseInt(item.more_info?.duration, 10) || 240;
+          const rawCover = item.image || '';
+          const cover = rawCover
+            ? rawCover.replace('150x150', '500x500').replace('50x50', '500x500')
+            : 'https://c.saavncdn.com/871/Brahmastra-Original-Motion-Picture-Soundtrack-Hindi-2022-20221006155213-500x500.webp';
+
           songs.push({
-            id: `itunes-${item.trackId}`,
-            title: item.trackName,
-            artist_id: `itunes-artist-${item.artistId || Math.random()}`,
-            artist_name: item.artistName,
-            album_title: item.collectionName || 'Single',
-            cover_url: item.artworkUrl100
-              ? item.artworkUrl100.replace('100x100bb', '600x600bb')
-              : 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&q=80',
-            audio_url: item.previewUrl,
-            duration_seconds: Math.round((item.trackTimeMillis || 240000) / 1000),
-            language: 'English',
-            genre_name: item.primaryGenreName || 'Pop',
-            plays_count: 350000,
-            likes_count: 24000,
+            id: `saavn-auto-${item.id}`,
+            title,
+            artist_id: `artist-${item.id}`,
+            artist_name: artist,
+            album_title: album,
+            cover_url: cover,
+            audio_url: streamUrl,
+            duration_seconds: durationSec,
+            language: 'Hindi',
+            genre_name: 'Bollywood',
+            plays_count: 450000,
+            likes_count: 21000,
             is_explicit: false,
-            lyrics: `[00:00.00] Streaming ${item.trackName} by ${item.artistName}\n[00:06.00] Pure Audio on GAAN by Creative Max`,
+            lyrics: `[00:00.00] Streaming ${title} by ${artist}\n[00:05.00] Mastered by Creative Max Audio Engine`,
           });
         }
       }

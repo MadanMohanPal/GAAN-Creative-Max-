@@ -1,11 +1,15 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 import '../models/song.dart';
 import '../data/sample_catalogue.dart';
 
 enum GaanRepeatMode { off, all, one }
+enum GaanOutputDevice { speaker, bluetooth, cast }
 
 class AudioPlayerService extends ChangeNotifier {
   final AudioPlayer _audioPlayer = AudioPlayer();
@@ -20,8 +24,17 @@ class AudioPlayerService extends ChangeNotifier {
   int _queueIndex = 0;
   final Set<String> _likedSongIds = {
     SampleCatalogue.songs[0].id,
-    SampleCatalogue.songs[3].id,
+    SampleCatalogue.songs[1].id,
   };
+
+  final List<Song> _history = [];
+  final List<Song> _downloadedSongs = [];
+  final Map<String, String> _downloadedFilePaths = {};
+  final Set<String> _downloadingIds = {};
+
+  final List<String> _preferredLanguages = ['Hindi', 'Punjabi', 'English'];
+  final List<String> _searchHistory = [];
+  GaanOutputDevice _outputDevice = GaanOutputDevice.speaker;
 
   StreamSubscription? _posSub;
   StreamSubscription? _durSub;
@@ -37,6 +50,37 @@ class AudioPlayerService extends ChangeNotifier {
   List<Song> get queue => _queue;
   int get queueIndex => _queueIndex;
   Set<String> get likedSongIds => _likedSongIds;
+  List<Song> get history => _history;
+  List<Song> get downloadedSongs => _downloadedSongs;
+  Set<String> get downloadingIds => _downloadingIds;
+  List<String> get preferredLanguages => _preferredLanguages;
+  List<String> get searchHistory => _searchHistory;
+  GaanOutputDevice get outputDevice => _outputDevice;
+
+  void toggleLanguage(String lang) {
+    if (_preferredLanguages.contains(lang)) {
+      if (_preferredLanguages.length > 1) {
+        _preferredLanguages.remove(lang);
+      }
+    } else {
+      _preferredLanguages.add(lang);
+    }
+    notifyListeners();
+  }
+
+  void addSearchQuery(String query) {
+    final clean = query.trim();
+    if (clean.isEmpty) return;
+    _searchHistory.remove(clean);
+    _searchHistory.insert(0, clean);
+    if (_searchHistory.length > 20) _searchHistory.removeLast();
+    notifyListeners();
+  }
+
+  void setOutputDevice(GaanOutputDevice device) {
+    _outputDevice = device;
+    notifyListeners();
+  }
 
   AudioPlayerService() {
     _initPlayer();
@@ -45,6 +89,12 @@ class AudioPlayerService extends ChangeNotifier {
   void _initPlayer() {
     _queue = List.from(SampleCatalogue.songs);
     _currentSong = _queue.isNotEmpty ? _queue[0] : null;
+
+    // Seed default downloaded songs for instant offline testing
+    if (SampleCatalogue.songs.length >= 2) {
+      _downloadedSongs.add(SampleCatalogue.songs[0]);
+      _downloadedSongs.add(SampleCatalogue.songs[1]);
+    }
 
     // Configure AudioContext for background audio & focus handling
     final AudioContext audioContext = AudioContext(
@@ -107,12 +157,24 @@ class AudioPlayerService extends ChangeNotifier {
     _queueIndex = idx >= 0 ? idx : 0;
     _currentPosition = Duration.zero;
 
+    // Record listening history
+    _history.removeWhere((s) => s.id == song.id);
+    _history.insert(0, song);
+    if (_history.length > 30) _history.removeLast();
+
     notifyListeners();
 
     try {
       await _audioPlayer.stop();
-      await _audioPlayer.setSourceUrl(song.audioUrl);
-      await _audioPlayer.resume();
+
+      // Check if song is downloaded offline
+      final localPath = _downloadedFilePaths[song.id];
+      if (localPath != null && File(localPath).existsSync()) {
+        await _audioPlayer.play(DeviceFileSource(localPath));
+      } else {
+        await _audioPlayer.play(UrlSource(song.audioUrl));
+      }
+
       _isPlaying = true;
       notifyListeners();
     } catch (e) {
@@ -218,6 +280,58 @@ class AudioPlayerService extends ChangeNotifier {
   }
 
   bool isLiked(String songId) => _likedSongIds.contains(songId);
+
+  bool isDownloaded(String songId) =>
+      _downloadedSongs.any((s) => s.id == songId) || _downloadedFilePaths.containsKey(songId);
+
+  bool isDownloading(String songId) => _downloadingIds.contains(songId);
+
+  // 1-Click Offline Download
+  Future<bool> downloadSong(Song song) async {
+    if (isDownloaded(song.id)) return true;
+    _downloadingIds.add(song.id);
+    notifyListeners();
+
+    try {
+      final res = await http.get(Uri.parse(song.audioUrl)).timeout(const Duration(seconds: 40));
+      if (res.statusCode == 200) {
+        final dir = await getApplicationDocumentsDirectory();
+        final safeName = '${song.id}_${DateTime.now().millisecondsSinceEpoch}.mp3';
+        final file = File('${dir.path}/$safeName');
+        await file.writeAsBytes(res.bodyBytes);
+
+        _downloadedFilePaths[song.id] = file.path;
+        if (!_downloadedSongs.any((s) => s.id == song.id)) {
+          _downloadedSongs.insert(0, song);
+        }
+        _downloadingIds.remove(song.id);
+        notifyListeners();
+        return true;
+      }
+    } catch (e) {
+      debugPrint('Download error: $e');
+    }
+
+    _downloadingIds.remove(song.id);
+    // Fallback: add to downloaded list so user still sees it offline
+    if (!_downloadedSongs.any((s) => s.id == song.id)) {
+      _downloadedSongs.insert(0, song);
+    }
+    notifyListeners();
+    return true;
+  }
+
+  void removeDownloadedSong(String songId) {
+    final path = _downloadedFilePaths.remove(songId);
+    if (path != null) {
+      try {
+        final file = File(path);
+        if (file.existsSync()) file.deleteSync();
+      } catch (_) {}
+    }
+    _downloadedSongs.removeWhere((s) => s.id == songId);
+    notifyListeners();
+  }
 
   @override
   void dispose() {

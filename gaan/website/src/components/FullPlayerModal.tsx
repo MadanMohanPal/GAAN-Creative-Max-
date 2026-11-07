@@ -17,6 +17,7 @@ import {
   ListMusic,
   FileText,
   Share2,
+  Download,
 } from 'lucide-react';
 
 const formatTime = (secs: number) => {
@@ -51,6 +52,7 @@ export const FullPlayerModal = () => {
     setFullPlayerOpen,
     toggleLike,
     playSong,
+    downloadSong,
   } = usePlayer();
 
   const [activeTab, setActiveTab] = useState<'player' | 'lyrics' | 'queue'>('player');
@@ -110,23 +112,33 @@ export const FullPlayerModal = () => {
             }`}
           >
             <ListMusic className="w-3.5 h-3.5" />
-            Up Next ({queue.length})
+            Up Next
           </button>
         </div>
 
-        <button
-          onClick={() => {
-            if (navigator.share) {
-              navigator.share({ title: currentSong.title, text: `Listen to ${currentSong.title} on GAAN` });
-            } else {
-              alert('Link copied to clipboard!');
-            }
-          }}
-          className="p-2 text-zinc-400 hover:text-white rounded-full hover:bg-zinc-900/80 transition-colors"
-          title="Share song"
-        >
-          <Share2 className="w-5 h-5" />
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => downloadSong(currentSong)}
+            className="p-2 text-zinc-400 hover:text-purple-400 rounded-full hover:bg-zinc-900/80 transition-colors"
+            title="1-Click Download MP3"
+          >
+            <Download className="w-5 h-5" />
+          </button>
+
+          <button
+            onClick={() => {
+              if (navigator.share) {
+                navigator.share({ title: currentSong.title, text: `Listen to ${currentSong.title} on GAAN` });
+              } else {
+                alert('Link copied to clipboard!');
+              }
+            }}
+            className="p-2 text-zinc-400 hover:text-white rounded-full hover:bg-zinc-900/80 transition-colors"
+            title="Share song"
+          >
+            <Share2 className="w-5 h-5" />
+          </button>
+        </div>
       </header>
 
       {/* Center Body based on tab */}

@@ -17,7 +17,11 @@ import {
   History,
   Sparkles,
   Layers,
+  Download,
+  Check,
+  HardDriveDownload,
 } from 'lucide-react';
+import Link from 'next/link';
 
 interface CustomPlaylist {
   id: string;
@@ -29,12 +33,18 @@ interface CustomPlaylist {
 }
 
 export default function LibraryPage() {
-  const { currentSong, likedSongIds, playSong } = usePlayer();
-  const [activeTab, setActiveTab] = useState<'all' | 'liked' | 'playlists' | 'albums' | 'artists' | 'history'>('all');
+  const { currentSong, likedSongIds, playSong, history, downloadedSongs, downloadSong, removeDownloadedSong } = usePlayer();
+  const [activeTab, setActiveTab] = useState<'downloaded' | 'all' | 'liked' | 'playlists' | 'albums' | 'artists' | 'history'>('downloaded');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [newPlaylistName, setNewPlaylistName] = useState('');
   const [newPlaylistDesc, setNewPlaylistDesc] = useState('');
   const [selectedPlaylist, setSelectedPlaylist] = useState<CustomPlaylist | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 2500);
+  };
 
   // Custom playlists stored in state + localStorage
   const [playlists, setPlaylists] = useState<CustomPlaylist[]>([
@@ -42,24 +52,24 @@ export default function LibraryPage() {
       id: 'pl-1',
       name: 'Bollywood Romance & Sufi',
       description: 'Soulful Bollywood romantic melodies by Creative Max',
-      songIds: [SONGS[0].id, SONGS[1].id, SONGS[3].id, SONGS[4]?.id || SONGS[0].id],
+      songIds: [SONGS[0].id, SONGS[2].id, SONGS[5]?.id || SONGS[0].id],
       coverUrl: SONGS[0].cover_url,
       createdAt: '2024-05-01',
     },
     {
       id: 'pl-2',
-      name: 'Coke Studio Masterpieces',
-      description: 'Mystical sufi and Coke Studio anthems',
-      songIds: [SONGS[5]?.id || SONGS[0].id, SONGS[6]?.id || SONGS[1].id, SONGS[7]?.id || SONGS[2].id],
-      coverUrl: SONGS[5]?.cover_url || SONGS[0].cover_url,
+      name: 'Punjabi Blockbusters & Hip-Hop',
+      description: 'Sidhu Moose Wala, Diljit & AP Dhillon high energy tracks',
+      songIds: [SONGS[1]?.id || SONGS[0].id, SONGS[3]?.id || SONGS[1].id, SONGS[4]?.id || SONGS[2].id],
+      coverUrl: SONGS[1]?.cover_url || SONGS[0].cover_url,
       createdAt: '2024-05-02',
     },
     {
       id: 'pl-3',
-      name: 'Punjabi & Global Beats',
-      description: 'High octane Punjabi hits for road trips',
-      songIds: [SONGS[8]?.id || SONGS[0].id, SONGS[9]?.id || SONGS[1].id, SONGS[10]?.id || SONGS[3].id],
-      coverUrl: SONGS[8]?.cover_url || SONGS[0].cover_url,
+      name: 'Global Hits & Coke Studio',
+      description: 'Worldwide synthwave & mystical sufi harmonics',
+      songIds: [SONGS[7]?.id || SONGS[0].id, SONGS[8]?.id || SONGS[1].id, SONGS[13]?.id || SONGS[3].id],
+      coverUrl: SONGS[7]?.cover_url || SONGS[0].cover_url,
       createdAt: '2024-05-03',
     },
   ]);
@@ -99,6 +109,7 @@ export default function LibraryPage() {
     setNewPlaylistName('');
     setNewPlaylistDesc('');
     setIsCreateModalOpen(false);
+    showToast(`Created playlist "${newPl.name}"`);
   };
 
   const handleDeletePlaylist = (id: string, e: React.MouseEvent) => {
@@ -107,25 +118,42 @@ export default function LibraryPage() {
     if (selectedPlaylist?.id === id) {
       setSelectedPlaylist(null);
     }
+    showToast('Playlist deleted');
   };
 
-  // Find all liked songs (plus safeguard fallback so it always displays liked items)
+  // Find all liked songs
   const likedSongs = SONGS.filter((s) => likedSongIds.has(s.id));
 
+  // Download all liked songs at once
+  const downloadAllLiked = async () => {
+    showToast(`Downloading all ${likedSongs.length} liked tracks...`);
+    for (const song of likedSongs) {
+      await downloadSong(song);
+    }
+  };
+
   return (
-    <div className="space-y-8 max-w-7xl mx-auto">
+    <div className="space-y-8 max-w-7xl mx-auto pb-12">
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="fixed top-20 right-8 z-50 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2.5 rounded-2xl shadow-2xl flex items-center gap-2 border border-purple-400 font-semibold text-xs animate-in fade-in slide-in-from-top-4">
+          <Check className="w-4 h-4" />
+          <span>{toastMessage}</span>
+        </div>
+      )}
+
       {/* Library Header with Creative Max Branding */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-3xl bg-gradient-to-r from-[#120d24] via-[#0a0a14] to-[#05050a] border border-purple-900/40 shadow-2xl relative overflow-hidden">
         <div className="relative z-10">
           <div className="flex items-center gap-2 mb-1">
             <span className="px-2.5 py-0.5 rounded-full bg-purple-900/80 text-purple-300 text-[10px] font-bold uppercase tracking-wider border border-purple-600">
-              Creative Max Music Engine
+              Creative Max Audio Engine
             </span>
-            <span className="text-zinc-500 text-xs">• Lossless Audio</span>
+            <span className="text-zinc-500 text-xs">• 1-Click Offline Downloads</span>
           </div>
           <h1 className="text-3xl font-black text-white">Your Music Library</h1>
           <p className="text-sm text-zinc-400 mt-1">
-            Browse all tracks, custom playlists, and favorites. Crafted with passion by <span className="text-purple-400 font-bold">Creative Max</span>.
+            Listen offline, organize custom playlists, and manage favorites. Crafted with passion by <span className="text-purple-400 font-bold">Creative Max</span>.
           </p>
         </div>
 
@@ -140,8 +168,20 @@ export default function LibraryPage() {
         </div>
       </div>
 
-      {/* Navigation Tabs */}
+      {/* Navigation Tabs (Clean Modern Labels: No Artificial Number Counts) */}
       <div className="flex items-center gap-2 border-b border-zinc-900 pb-3 overflow-x-auto">
+        <button
+          onClick={() => { setActiveTab('downloaded'); setSelectedPlaylist(null); }}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 ${
+            activeTab === 'downloaded'
+              ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg'
+              : 'text-zinc-400 hover:text-white bg-zinc-900/50'
+          }`}
+        >
+          <HardDriveDownload className="w-3.5 h-3.5" />
+          Downloaded Offline
+        </button>
+
         <button
           onClick={() => { setActiveTab('all'); setSelectedPlaylist(null); }}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 ${
@@ -151,7 +191,7 @@ export default function LibraryPage() {
           }`}
         >
           <Layers className="w-3.5 h-3.5" />
-          All Songs ({SONGS.length})
+          All Songs
         </button>
 
         <button
@@ -163,7 +203,7 @@ export default function LibraryPage() {
           }`}
         >
           <Heart className="w-3.5 h-3.5 fill-current" />
-          Liked Songs ({likedSongs.length})
+          Liked Songs
         </button>
 
         <button
@@ -175,7 +215,7 @@ export default function LibraryPage() {
           }`}
         >
           <ListMusic className="w-3.5 h-3.5" />
-          Playlists ({playlists.length})
+          Playlists
         </button>
 
         <button
@@ -187,7 +227,7 @@ export default function LibraryPage() {
           }`}
         >
           <Disc className="w-3.5 h-3.5" />
-          Albums ({ALBUMS.length})
+          Albums
         </button>
 
         <button
@@ -199,16 +239,89 @@ export default function LibraryPage() {
           }`}
         >
           <Users className="w-3.5 h-3.5" />
-          Artists ({ARTISTS.length})
+          Artists
+        </button>
+
+        <button
+          onClick={() => { setActiveTab('history'); setSelectedPlaylist(null); }}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 ${
+            activeTab === 'history'
+              ? 'bg-purple-600 text-white shadow-purple-glow'
+              : 'text-zinc-400 hover:text-white bg-zinc-900/50'
+          }`}
+        >
+          <History className="w-3.5 h-3.5" />
+          History
         </button>
       </div>
 
-      {/* 1. All Songs Tab */}
+      {/* 1. Downloaded Offline Songs Tab */}
+      {activeTab === 'downloaded' && (
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                <span>Downloaded Offline Tracks</span>
+                <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-950 border border-emerald-500 text-emerald-300 font-bold uppercase">
+                  Ready Offline
+                </span>
+              </h2>
+              <p className="text-xs text-zinc-400">Songs saved directly on your device with 1-click download</p>
+            </div>
+            {downloadedSongs.length > 0 && (
+              <button
+                onClick={() => playSong(downloadedSongs[0], downloadedSongs)}
+                className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-md"
+              >
+                <Play className="w-3.5 h-3.5 fill-current" />
+                Play All Offline
+              </button>
+            )}
+          </div>
+
+          {downloadedSongs.length > 0 ? (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+              {downloadedSongs.map((song) => (
+                <div key={song.id} className="relative group">
+                  <SongCard song={song} playlistContext={downloadedSongs} />
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeDownloadedSong(song.id);
+                      showToast(`Removed "${song.title}" from downloads`);
+                    }}
+                    className="absolute bottom-4 right-4 p-1.5 rounded-full bg-black/80 hover:bg-red-600 text-zinc-400 hover:text-white transition-all text-xs z-10 opacity-0 group-hover:opacity-100"
+                    title="Delete download"
+                  >
+                    <Trash2 className="w-3 h-3" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="p-16 text-center bg-[#0a0a0f] rounded-3xl border border-zinc-900 text-zinc-400 space-y-3">
+              <HardDriveDownload className="w-14 h-14 mx-auto text-emerald-600/60" />
+              <h3 className="text-lg font-bold text-white">No downloaded songs yet</h3>
+              <p className="text-xs text-zinc-500 max-w-md mx-auto">
+                Every song card has a 1-click download button (⬇). Tap it on any song to save the full 160kbps MP3 directly to your device for offline listening!
+              </p>
+              <button
+                onClick={() => setActiveTab('all')}
+                className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold inline-flex items-center gap-1.5 mt-2 shadow-md"
+              >
+                Browse Songs to Download
+              </button>
+            </div>
+          )}
+        </section>
+      )}
+
+      {/* 2. All Songs Tab */}
       {activeTab === 'all' && (
         <section className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-xl font-bold text-white">Entire Music Catalog ({SONGS.length} Full Songs)</h2>
+              <h2 className="text-xl font-bold text-white">Music Catalog</h2>
               <p className="text-xs text-zinc-400">Mastered by Creative Max in High-Fidelity Lossless Audio</p>
             </div>
             <button
@@ -228,23 +341,32 @@ export default function LibraryPage() {
         </section>
       )}
 
-      {/* 2. Liked Songs Tab */}
+      {/* 3. Liked Songs Tab */}
       {activeTab === 'liked' && (
         <section className="space-y-4">
           {likedSongs.length > 0 ? (
             <div>
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
                 <div>
-                  <h2 className="text-xl font-bold text-white">Favorite Liked Tracks ({likedSongs.length})</h2>
+                  <h2 className="text-xl font-bold text-white">Favorite Liked Tracks</h2>
                   <p className="text-xs text-zinc-400">All songs you loved on GAAN</p>
                 </div>
-                <button
-                  onClick={() => playSong(likedSongs[0], likedSongs)}
-                  className="px-4 py-2 rounded-xl bg-pink-600 hover:bg-pink-500 text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-md"
-                >
-                  <Play className="w-3.5 h-3.5 fill-current" />
-                  Play All Liked
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={downloadAllLiked}
+                    className="px-4 py-2 rounded-xl bg-purple-900/60 hover:bg-purple-800 text-purple-200 border border-purple-700 text-xs font-bold flex items-center gap-1.5 transition-all"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    Download All Liked
+                  </button>
+                  <button
+                    onClick={() => playSong(likedSongs[0], likedSongs)}
+                    className="px-4 py-2 rounded-xl bg-pink-600 hover:bg-pink-500 text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-md"
+                  >
+                    <Play className="w-3.5 h-3.5 fill-current" />
+                    Play All Liked
+                  </button>
+                </div>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                 {likedSongs.map((song) => (
@@ -264,7 +386,7 @@ export default function LibraryPage() {
         </section>
       )}
 
-      {/* 3. Playlists Tab */}
+      {/* 4. Playlists Tab */}
       {activeTab === 'playlists' && (
         <section className="space-y-6">
           {selectedPlaylist ? (
@@ -299,15 +421,21 @@ export default function LibraryPage() {
                       }}
                       className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-bold flex items-center gap-2 shadow-purple-glow"
                     >
-                      <Play className="w-4 h-4 fill-current" /> Play Playlist
+                      <Play className="w-4 h-4 fill-current" />
+                      Play Playlist
+                    </button>
+                    <button
+                      onClick={(e) => handleDeletePlaylist(selectedPlaylist.id, e)}
+                      className="px-3.5 py-2 rounded-xl bg-zinc-800 hover:bg-red-600 text-zinc-400 hover:text-white text-xs font-bold transition-all"
+                    >
+                      Delete Playlist
                     </button>
                   </div>
                 </div>
               </div>
 
-              {/* Playlist Tracks */}
-              <div>
-                <h3 className="text-base font-bold text-white mb-3">Songs in this Playlist</h3>
+              <div className="space-y-2">
+                <h3 className="text-base font-bold text-white mb-2">Playlist Songs</h3>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                   {SONGS.filter((s) => selectedPlaylist.songIds.includes(s.id)).map((song) => (
                     <SongCard key={song.id} song={song} playlistContext={SONGS} />
@@ -317,193 +445,175 @@ export default function LibraryPage() {
             </div>
           ) : (
             /* Playlists Grid */
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-xl font-bold text-white">Your Custom Playlists ({playlists.length})</h2>
-                  <p className="text-xs text-zinc-400">Created by you and powered by Creative Max</p>
-                </div>
-                <button
-                  onClick={() => setIsCreateModalOpen(true)}
-                  className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-md"
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {playlists.map((pl) => (
+                <div
+                  key={pl.id}
+                  onClick={() => setSelectedPlaylist(pl)}
+                  className="p-5 rounded-2xl bg-[#0e0e15] border border-zinc-900 hover:border-purple-600 cursor-pointer transition-all group flex items-center gap-4"
                 >
-                  <PlusCircle className="w-3.5 h-3.5" />
-                  New Playlist
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                {playlists.map((pl) => {
-                  const plSongs = SONGS.filter((s) => pl.songIds.includes(s.id));
-                  return (
-                    <div
-                      key={pl.id}
-                      onClick={() => setSelectedPlaylist(pl)}
-                      className="group relative bg-[#0e0e15]/70 hover:bg-[#161622] p-4 rounded-2xl border border-zinc-900/80 hover:border-purple-900/60 transition-all cursor-pointer flex flex-col justify-between"
-                    >
-                      <div className="flex items-start gap-4">
-                        <div className="w-20 h-20 rounded-xl overflow-hidden bg-zinc-900 shrink-0 relative">
-                          <img
-                            src={pl.coverUrl}
-                            alt={pl.name}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                          />
-                          <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Play className="w-8 h-8 fill-purple-400 text-purple-400" />
-                          </div>
-                        </div>
-
-                        <div className="overflow-hidden flex-1">
-                          <h3 className="text-base font-bold text-white group-hover:text-purple-300 transition-colors truncate">
-                            {pl.name}
-                          </h3>
-                          <p className="text-xs text-zinc-400 mt-1 line-clamp-2">{pl.description}</p>
-                          <span className="text-[11px] text-zinc-500 mt-2 block">
-                            {pl.songIds.length} tracks • {pl.createdAt}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center justify-between mt-4 pt-3 border-t border-zinc-900/60">
-                        <span className="text-xs font-semibold text-purple-400 group-hover:underline flex items-center gap-1">
-                          <Play className="w-3.5 h-3.5 fill-current" /> Open & Play
-                        </span>
-                        <button
-                          onClick={(e) => handleDeletePlaylist(pl.id, e)}
-                          className="p-1.5 text-zinc-500 hover:text-red-400 rounded-lg hover:bg-zinc-900 transition-colors"
-                          title="Delete playlist"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+                  <img src={pl.coverUrl} alt={pl.name} className="w-16 h-16 rounded-xl object-cover shrink-0 shadow-md" />
+                  <div className="flex-1 overflow-hidden">
+                    <h3 className="text-sm font-bold text-white truncate group-hover:text-purple-300">{pl.name}</h3>
+                    <p className="text-xs text-zinc-400 truncate mt-0.5">{pl.description}</p>
+                    <span className="text-[10px] text-zinc-500 font-mono mt-1 block">Created: {pl.createdAt}</span>
+                  </div>
+                  <button
+                    onClick={(e) => handleDeletePlaylist(pl.id, e)}
+                    className="p-1.5 text-zinc-500 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                    title="Delete"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
             </div>
           )}
         </section>
       )}
 
-      {/* 4. Albums Tab */}
+      {/* 5. Albums Tab */}
       {activeTab === 'albums' && (
-        <section>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            {ALBUMS.map((album) => {
-              const albumSongs = SONGS.filter((s) => s.album_title === album.title);
-              return (
-                <div
-                  key={album.id}
-                  onClick={() => albumSongs.length > 0 && playSong(albumSongs[0], albumSongs)}
-                  className="group bg-[#0e0e15]/70 hover:bg-[#161622] p-3.5 rounded-2xl border border-zinc-900/80 hover:border-purple-900/60 transition-all cursor-pointer"
-                >
-                  <div className="aspect-square w-full rounded-xl overflow-hidden mb-3 bg-zinc-950">
-                    <img
-                      src={album.cover_url}
-                      alt={album.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                    />
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-bold text-white">Albums & Soundtracks</h2>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            {ALBUMS.map((album) => (
+              <div
+                key={album.id}
+                onClick={() => {
+                  const albumSongs = SONGS.filter((s) => s.album_title?.toLowerCase() === album.title.toLowerCase());
+                  if (albumSongs.length > 0) playSong(albumSongs[0], albumSongs);
+                  else playSong(SONGS[0], SONGS);
+                  showToast(`Playing Album: ${album.title}`);
+                }}
+                className="group bg-[#0e0e15] p-3.5 rounded-2xl border border-zinc-900 hover:border-purple-600 cursor-pointer transition-all"
+              >
+                <div className="relative aspect-square w-full rounded-xl overflow-hidden mb-3">
+                  <img src={album.cover_url} alt={album.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                    <div className="w-10 h-10 rounded-full bg-purple-600 text-white flex items-center justify-center shadow-lg">
+                      <Play className="w-4 h-4 fill-current ml-0.5" />
+                    </div>
                   </div>
-                  <h4 className="text-sm font-semibold text-white truncate group-hover:text-purple-300">
-                    {album.title}
-                  </h4>
-                  <p className="text-xs text-zinc-400 truncate mt-0.5">{album.artist_name}</p>
-                  <p className="text-[11px] text-zinc-500 mt-1">
-                    {album.release_date ? album.release_date.substring(0, 4) : '2024'} • {albumSongs.length} songs
-                  </p>
                 </div>
-              );
-            })}
+                <h4 className="text-sm font-bold text-white truncate">{album.title}</h4>
+                <p className="text-xs text-zinc-400 truncate mt-0.5">{album.artist_name}</p>
+                <span className="text-[10px] text-zinc-500 font-mono mt-1 block">{album.language || 'Studio Album'}</span>
+              </div>
+            ))}
           </div>
         </section>
       )}
 
-      {/* 5. Artists Tab */}
+      {/* 6. Artists Tab */}
       {activeTab === 'artists' && (
-        <section>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            {ARTISTS.map((artist) => {
-              const artistSongs = SONGS.filter((s) =>
-                s.artist_name.toLowerCase().includes(artist.name.toLowerCase())
-              );
-              return (
-                <div
-                  key={artist.id}
-                  onClick={() => artistSongs.length > 0 && playSong(artistSongs[0], artistSongs)}
-                  className="group bg-[#0e0e15]/70 hover:bg-[#161622] p-4 rounded-2xl border border-zinc-900/80 hover:border-purple-900/60 transition-all text-center cursor-pointer"
-                >
-                  <div className="w-24 h-24 mx-auto rounded-full overflow-hidden mb-3 border-2 border-purple-500/20 group-hover:border-purple-400 transition-colors">
-                    <img
-                      src={artist.image_url}
-                      alt={artist.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                    />
-                  </div>
-                  <h4 className="text-sm font-bold text-white truncate group-hover:text-purple-300">
-                    {artist.name}
-                  </h4>
-                  <p className="text-xs text-zinc-500 mt-1">{artistSongs.length} songs</p>
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-bold text-white">Spotlight Artists</h2>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            {ARTISTS.map((artist) => (
+              <Link
+                key={artist.id}
+                href={`/search?q=${encodeURIComponent(artist.name)}`}
+                className="group p-4 rounded-2xl bg-[#0e0e15] border border-zinc-900 hover:border-purple-600 transition-all text-center flex flex-col items-center"
+              >
+                <div className="w-24 h-24 rounded-full overflow-hidden mb-3 border-2 border-purple-900/50 group-hover:border-purple-500 group-hover:scale-105 transition-all shadow-xl">
+                  <img src={artist.image_url} alt={artist.name} className="w-full h-full object-cover" />
                 </div>
-              );
-            })}
+                <h4 className="text-sm font-bold text-white truncate max-w-full group-hover:text-purple-300">{artist.name}</h4>
+                <p className="text-xs text-zinc-400 truncate max-w-full">{artist.language} • Verified</p>
+                <span className="mt-2 text-[10px] text-purple-400 font-bold">Search Songs →</span>
+              </Link>
+            ))}
           </div>
         </section>
       )}
 
-      {/* Create Playlist Modal */}
+      {/* 7. History Tab */}
+      {activeTab === 'history' && (
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-bold text-white">Listening History</h2>
+              <p className="text-xs text-zinc-400">Tracks you recently streamed on GAAN</p>
+            </div>
+            {history.length > 0 && (
+              <button
+                onClick={() => playSong(history[0], history)}
+                className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-md"
+              >
+                <Play className="w-3.5 h-3.5 fill-current" />
+                Play History
+              </button>
+            )}
+          </div>
+
+          {history.length > 0 ? (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+              {history.map((song) => (
+                <SongCard key={`hist-tab-${song.id}`} song={song} playlistContext={history} />
+              ))}
+            </div>
+          ) : (
+            <div className="p-16 text-center bg-[#0a0a0f] rounded-3xl border border-zinc-900 text-zinc-400">
+              <History className="w-14 h-14 mx-auto mb-3 text-zinc-600" />
+              <h3 className="text-lg font-bold text-white mb-1">No listening history yet</h3>
+              <p className="text-xs text-zinc-500 max-w-sm mx-auto">
+                Any song you play will automatically appear here so you can pick up right where you left off.
+              </p>
+            </div>
+          )}
+        </section>
+      )}
+
+      {/* Modal: Create Playlist */}
       {isCreateModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#12121c] border border-purple-900/50 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
+          <div className="bg-[#101018] border border-purple-900/60 rounded-3xl p-6 w-full max-w-md shadow-2xl space-y-4">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-purple-400 font-bold text-base">
-                <Music className="w-5 h-5" />
-                Create New Playlist
-              </div>
-              <button
-                onClick={() => setIsCreateModalOpen(false)}
-                className="text-zinc-400 hover:text-white p-1 rounded-lg hover:bg-zinc-800"
-              >
+              <h3 className="text-lg font-bold text-white">Create New Playlist</h3>
+              <button onClick={() => setIsCreateModalOpen(false)} className="text-zinc-400 hover:text-white">
                 <X className="w-5 h-5" />
               </button>
             </div>
-
             <form onSubmit={handleCreatePlaylist} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-zinc-400 mb-1.5">Playlist Name</label>
+                <label className="text-xs text-zinc-400 font-bold block mb-1">Playlist Name</label>
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Late Night Bollywood, Punjabi Gym"
                   value={newPlaylistName}
                   onChange={(e) => setNewPlaylistName(e.target.value)}
-                  className="w-full bg-[#0a0a0f] text-white text-sm px-4 py-3 rounded-xl border border-zinc-800 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                  placeholder="e.g. My Favorite Chill Hits"
+                  className="w-full bg-[#161622] text-white text-sm p-3 rounded-xl border border-zinc-800 focus:outline-none focus:border-purple-500"
                 />
               </div>
-
               <div>
-                <label className="block text-xs font-semibold text-zinc-400 mb-1.5">Description (optional)</label>
-                <textarea
-                  placeholder="Curated playlist mood powered by Creative Max..."
-                  rows={3}
+                <label className="text-xs text-zinc-400 font-bold block mb-1">Description (Optional)</label>
+                <input
+                  type="text"
                   value={newPlaylistDesc}
                   onChange={(e) => setNewPlaylistDesc(e.target.value)}
-                  className="w-full bg-[#0a0a0f] text-white text-sm px-4 py-2.5 rounded-xl border border-zinc-800 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 resize-none"
+                  placeholder="e.g. Mastered by Creative Max"
+                  className="w-full bg-[#161622] text-white text-sm p-3 rounded-xl border border-zinc-800 focus:outline-none focus:border-purple-500"
                 />
               </div>
-
               <div className="flex items-center justify-end gap-2 pt-2">
                 <button
                   type="button"
                   onClick={() => setIsCreateModalOpen(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold text-zinc-400 hover:text-white hover:bg-zinc-800"
+                  className="px-4 py-2 rounded-xl text-xs font-bold text-zinc-400 hover:text-white"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:opacity-90 text-white shadow-purple-glow"
+                  className="px-5 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-purple-glow"
                 >
-                  Save Playlist
+                  Create
                 </button>
               </div>
             </form>
