@@ -20,6 +20,14 @@ interface PlayerContextType {
   likedSongIds: Set<string>;
   history: Song[];
   downloadedSongs: Song[];
+  // Dynamic Audio & Studio Controls
+  playbackSpeed: number;
+  equalizerPreset: string;
+  bassBoost: number;
+  virtualizer: boolean;
+  sleepTimerMinutes: number | null;
+  sleepSecondsRemaining: number;
+  // Actions
   playSong: (song: Song, customQueue?: Song[]) => void;
   togglePlay: () => void;
   pauseSong: () => void;
@@ -35,12 +43,21 @@ interface PlayerContextType {
   toggleLike: (songId: string) => void;
   downloadSong: (song: Song) => Promise<void>;
   removeDownloadedSong: (songId: string) => void;
+  setPlaybackSpeed: (speed: number) => void;
+  setEqualizerPreset: (preset: string) => void;
+  setBassBoost: (val: number) => void;
+  setVirtualizer: (val: boolean) => void;
+  setSleepTimer: (minutes: number) => void;
+  cancelSleepTimer: () => void;
+  reorderQueue: (oldIdx: number, newIdx: number) => void;
+  removeFromQueue: (index: number) => void;
 }
 
 const PlayerContext = createContext<PlayerContextType | null>(null);
 
 export const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const sleepTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const [currentSong, setCurrentSong] = useState<Song | null>(SONGS[0]);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -56,6 +73,14 @@ export const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
   const [likedSongIds, setLikedSongIds] = useState<Set<string>>(new Set([SONGS[0].id, SONGS[1].id, SONGS[2].id]));
   const [history, setHistory] = useState<Song[]>([]);
   const [downloadedSongs, setDownloadedSongs] = useState<Song[]>([]);
+
+  // Dynamic Audio Controls
+  const [playbackSpeed, setPlaybackSpeedState] = useState<number>(1.0);
+  const [equalizerPreset, setEqualizerPresetState] = useState<string>('Studio Master');
+  const [bassBoost, setBassBoost] = useState<number>(80);
+  const [virtualizer, setVirtualizer] = useState<boolean>(true);
+  const [sleepTimerMinutes, setSleepTimerMinutes] = useState<number | null>(null);
+  const [sleepSecondsRemaining, setSleepSecondsRemaining] = useState<number>(0);
 
   // Load persistence from localStorage
   useEffect(() => {
@@ -80,6 +105,7 @@ export const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
     const audio = new Audio();
     audio.preload = 'metadata';
     audio.volume = volume;
+    audio.playbackRate = playbackSpeed;
     audioRef.current = audio;
 
     const handleTimeUpdate = () => setCurrentTime(audio.currentTime);
@@ -104,6 +130,30 @@ export const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
       audio.removeEventListener('pause', handlePause);
     };
   }, []);
+
+  // Sleep Timer countdown engine
+  useEffect(() => {
+    if (sleepTimerMinutes === null || sleepTimerMinutes <= 0) {
+      if (sleepTimerRef.current) clearInterval(sleepTimerRef.current);
+      return;
+    }
+
+    sleepTimerRef.current = setInterval(() => {
+      setSleepSecondsRemaining((prev) => {
+        if (prev <= 1) {
+          if (sleepTimerRef.current) clearInterval(sleepTimerRef.current);
+          setSleepTimerMinutes(null);
+          pauseSong();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => {
+      if (sleepTimerRef.current) clearInterval(sleepTimerRef.current);
+    };
+  }, [sleepTimerMinutes]);
 
   // MediaSession controls
   useEffect(() => {
@@ -133,6 +183,12 @@ export const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
     if (!audio) return;
 
     const handleEnded = () => {
+      if (sleepTimerMinutes === -1) {
+        pauseSong();
+        cancelSleepTimer();
+        return;
+      }
+
       if (repeatMode === 'one') {
         audio.currentTime = 0;
         audio.play().catch(console.error);
@@ -143,7 +199,7 @@ export const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
 
     audio.addEventListener('ended', handleEnded);
     return () => audio.removeEventListener('ended', handleEnded);
-  }, [repeatMode, queueIndex, queue, shuffle]);
+  }, [repeatMode, queueIndex, queue, shuffle, sleepTimerMinutes]);
 
   const playSong = (song: Song, customQueue?: Song[]) => {
     const newQueue = customQueue || (queue.length > 0 ? queue : SONGS);
@@ -164,6 +220,7 @@ export const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (audioRef.current) {
       audioRef.current.src = song.audio_url;
+      audioRef.current.playbackRate = playbackSpeed;
       audioRef.current.play().then(() => setIsPlaying(true)).catch((e) => {
         console.warn('Audio auto-play note (user interaction required):', e);
       });
@@ -180,6 +237,7 @@ export const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
       if (!audio.src && currentSong) {
         audio.src = currentSong.audio_url;
       }
+      audio.playbackRate = playbackSpeed;
       audio.play().then(() => setIsPlaying(true)).catch(console.error);
     }
   };
@@ -196,6 +254,7 @@ export const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
       if (!audioRef.current.src && currentSong) {
         audioRef.current.src = currentSong.audio_url;
       }
+      audioRef.current.playbackRate = playbackSpeed;
       audioRef.current.play().catch(console.error);
       setIsPlaying(true);
     }
@@ -221,6 +280,7 @@ export const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (audioRef.current) {
       audioRef.current.src = nextSong.audio_url;
+      audioRef.current.playbackRate = playbackSpeed;
       audioRef.current.play().catch(console.error);
     }
   };
@@ -239,6 +299,7 @@ export const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (audioRef.current) {
       audioRef.current.src = prevSong.audio_url;
+      audioRef.current.playbackRate = playbackSpeed;
       audioRef.current.play().catch(console.error);
     }
   };
@@ -292,6 +353,72 @@ export const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
     });
   };
 
+  // Dynamic Audio Controls
+  const setPlaybackSpeed = (speed: number) => {
+    setPlaybackSpeedState(speed);
+    if (audioRef.current) {
+      audioRef.current.playbackRate = speed;
+    }
+  };
+
+  const setEqualizerPreset = (preset: string) => {
+    setEqualizerPresetState(preset);
+    switch (preset) {
+      case 'Bass Boost 🔥':
+        setBassBoost(100);
+        setVirtualizer(true);
+        break;
+      case 'Vocal Clarity 🎙️':
+        setBassBoost(30);
+        setVirtualizer(false);
+        break;
+      case 'Acoustic / Sufi 🎸':
+        setBassBoost(50);
+        setVirtualizer(true);
+        break;
+      case 'Electronic / Dance 🎛️':
+        setBassBoost(95);
+        setVirtualizer(true);
+        break;
+      case 'Treble Boost ⚡':
+        setBassBoost(40);
+        setVirtualizer(true);
+        break;
+      default:
+        setBassBoost(75);
+        setVirtualizer(true);
+        break;
+    }
+  };
+
+  const setSleepTimer = (minutes: number) => {
+    if (minutes <= 0) {
+      cancelSleepTimer();
+      return;
+    }
+    setSleepTimerMinutes(minutes);
+    setSleepSecondsRemaining(minutes * 60);
+  };
+
+  const cancelSleepTimer = () => {
+    if (sleepTimerRef.current) clearInterval(sleepTimerRef.current);
+    setSleepTimerMinutes(null);
+    setSleepSecondsRemaining(0);
+  };
+
+  const reorderQueue = (oldIdx: number, newIdx: number) => {
+    setQueue(prev => {
+      const updated = [...prev];
+      const [item] = updated.splice(oldIdx, 1);
+      updated.splice(newIdx, 0, item);
+      return updated;
+    });
+  };
+
+  const removeFromQueue = (index: number) => {
+    setQueue(prev => prev.filter((_, i) => i !== index));
+  };
+
   // One-click Song Download engine
   const downloadSong = async (song: Song) => {
     const safeTitle = `${song.title} - ${song.artist_name}`;
@@ -343,6 +470,12 @@ export const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
         likedSongIds,
         history,
         downloadedSongs,
+        playbackSpeed,
+        equalizerPreset,
+        bassBoost,
+        virtualizer,
+        sleepTimerMinutes,
+        sleepSecondsRemaining,
         playSong,
         togglePlay,
         pauseSong,
@@ -358,6 +491,14 @@ export const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
         toggleLike,
         downloadSong,
         removeDownloadedSong,
+        setPlaybackSpeed,
+        setEqualizerPreset,
+        setBassBoost,
+        setVirtualizer,
+        setSleepTimer,
+        cancelSleepTimer,
+        reorderQueue,
+        removeFromQueue,
       }}
     >
       {children}

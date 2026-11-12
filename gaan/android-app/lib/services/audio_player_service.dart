@@ -36,6 +36,16 @@ class AudioPlayerService extends ChangeNotifier {
   final List<String> _searchHistory = [];
   GaanOutputDevice _outputDevice = GaanOutputDevice.speaker;
 
+  // Dynamic Audio Features: Sleep Timer, Studio Equalizer, Speed
+  Timer? _sleepTimer;
+  int? _sleepTimerMinutes;
+  int _sleepSecondsRemaining = 0;
+
+  String _activeEqualizerPreset = 'Studio Master';
+  double _bassBoostLevel = 0.8;
+  bool _virtualizerEnabled = true;
+  double _playbackSpeed = 1.0;
+
   StreamSubscription? _posSub;
   StreamSubscription? _durSub;
   StreamSubscription? _stateSub;
@@ -56,6 +66,13 @@ class AudioPlayerService extends ChangeNotifier {
   List<String> get preferredLanguages => _preferredLanguages;
   List<String> get searchHistory => _searchHistory;
   GaanOutputDevice get outputDevice => _outputDevice;
+
+  String get activeEqualizerPreset => _activeEqualizerPreset;
+  double get bassBoostLevel => _bassBoostLevel;
+  bool get virtualizerEnabled => _virtualizerEnabled;
+  double get playbackSpeed => _playbackSpeed;
+  int? get sleepTimerMinutes => _sleepTimerMinutes;
+  int get sleepSecondsRemaining => _sleepSecondsRemaining;
 
   void toggleLanguage(String lang) {
     if (_preferredLanguages.contains(lang)) {
@@ -137,6 +154,11 @@ class AudioPlayerService extends ChangeNotifier {
   }
 
   void _handleTrackComplete() {
+    if (_sleepTimerMinutes == -1) {
+      pause();
+      cancelSleepTimer();
+      return;
+    }
     if (_repeatMode == GaanRepeatMode.one) {
       seek(Duration.zero);
       resume();
@@ -173,6 +195,12 @@ class AudioPlayerService extends ChangeNotifier {
         await _audioPlayer.play(DeviceFileSource(localPath));
       } else {
         await _audioPlayer.play(UrlSource(song.audioUrl));
+      }
+
+      if (_playbackSpeed != 1.0) {
+        try {
+          await _audioPlayer.setPlaybackRate(_playbackSpeed);
+        } catch (_) {}
       }
 
       _isPlaying = true;
@@ -330,6 +358,132 @@ class AudioPlayerService extends ChangeNotifier {
       } catch (_) {}
     }
     _downloadedSongs.removeWhere((s) => s.id == songId);
+    notifyListeners();
+  }
+
+  // --- Dynamic Audio Controls ---
+
+  // Sleep Timer
+  void setSleepTimer(int minutes) {
+    _sleepTimer?.cancel();
+    if (minutes <= 0) {
+      _sleepTimerMinutes = null;
+      _sleepSecondsRemaining = 0;
+      notifyListeners();
+      return;
+    }
+
+    _sleepTimerMinutes = minutes;
+    _sleepSecondsRemaining = minutes * 60;
+    notifyListeners();
+
+    _sleepTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_sleepSecondsRemaining > 1) {
+        _sleepSecondsRemaining--;
+        notifyListeners();
+      } else {
+        _sleepSecondsRemaining = 0;
+        _sleepTimerMinutes = null;
+        timer.cancel();
+        pause();
+        notifyListeners();
+      }
+    });
+  }
+
+  void cancelSleepTimer() {
+    _sleepTimer?.cancel();
+    _sleepTimerMinutes = null;
+    _sleepSecondsRemaining = 0;
+    notifyListeners();
+  }
+
+  // Studio Sound Presets & FX
+  void setEqualizerPreset(String preset) {
+    _activeEqualizerPreset = preset;
+    // Map preset to default bass boost levels
+    switch (preset) {
+      case 'Bass Boost 🔥':
+        _bassBoostLevel = 1.0;
+        _virtualizerEnabled = true;
+        break;
+      case 'Vocal Clarity 🎙️':
+        _bassBoostLevel = 0.3;
+        _virtualizerEnabled = false;
+        break;
+      case 'Acoustic / Sufi 🎸':
+        _bassBoostLevel = 0.5;
+        _virtualizerEnabled = true;
+        break;
+      case 'Electronic / Dance 🎛️':
+        _bassBoostLevel = 0.9;
+        _virtualizerEnabled = true;
+        break;
+      case 'Treble Boost ⚡':
+        _bassBoostLevel = 0.4;
+        _virtualizerEnabled = true;
+        break;
+      default:
+        _bassBoostLevel = 0.7;
+        _virtualizerEnabled = true;
+        break;
+    }
+    notifyListeners();
+  }
+
+  void setBassBoost(double level) {
+    _bassBoostLevel = level.clamp(0.0, 1.0);
+    notifyListeners();
+  }
+
+  void toggleVirtualizer() {
+    _virtualizerEnabled = !_virtualizerEnabled;
+    notifyListeners();
+  }
+
+  // Playback Speed
+  Future<void> setPlaybackSpeed(double speed) async {
+    _playbackSpeed = speed;
+    notifyListeners();
+    try {
+      await _audioPlayer.setPlaybackRate(speed);
+    } catch (e) {
+      debugPrint('Playback speed error: $e');
+    }
+  }
+
+  // Queue Management
+  void reorderQueue(int oldIndex, int newIndex) {
+    if (oldIndex < 0 || oldIndex >= _queue.length || newIndex < 0 || newIndex >= _queue.length) {
+      return;
+    }
+    final item = _queue.removeAt(oldIndex);
+    _queue.insert(newIndex, item);
+    if (_currentSong != null) {
+      _queueIndex = _queue.indexWhere((s) => s.id == _currentSong!.id);
+    }
+    notifyListeners();
+  }
+
+  void removeFromQueue(int index) {
+    if (index < 0 || index >= _queue.length) return;
+    final removed = _queue.removeAt(index);
+    if (_currentSong != null && removed.id == _currentSong!.id) {
+      if (_queue.isNotEmpty) {
+        final nextIdx = index < _queue.length ? index : 0;
+        playSong(_queue[nextIdx]);
+      } else {
+        pause();
+        _currentSong = null;
+      }
+    } else if (_currentSong != null) {
+      _queueIndex = _queue.indexWhere((s) => s.id == _currentSong!.id);
+    }
+    notifyListeners();
+  }
+
+  void addToQueue(Song song) {
+    _queue.add(song);
     notifyListeners();
   }
 

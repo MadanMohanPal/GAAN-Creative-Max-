@@ -52,7 +52,8 @@ export default function HomePage() {
     if (activeMood === 'All') return true;
     const q = activeMood.toLowerCase();
     const title = s.title.toLowerCase();
-    const artist = s.artist.toLowerCase();
+    const artist = s.artist_name.toLowerCase();
+    const genre = (s.genre_name || '').toLowerCase();
     if (q === 'relax') {
       return title.includes('kesariya') || title.includes('afreen') || title.includes('tum hi ho') || artist.includes('arijit');
     }
@@ -63,7 +64,7 @@ export default function HomePage() {
       return artist.includes('sidhu') || artist.includes('diljit') || title.includes('295');
     }
     if (q === 'focus') {
-      return title.includes('afreen') || s.genre.toLowerCase().includes('sufi');
+      return title.includes('afreen') || genre.includes('sufi');
     }
     if (q === 'night drive') {
       return title.includes('cruel') || title.includes('blinding') || title.includes('295');
